@@ -4,19 +4,19 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{4ED7FCC1-F417-4A82-87AB-37FEE62EC1B2}</ProjectGuid>
+    <ProjectGuid>{439D6CD1-72FA-4CE5-AB37-6F55611B748F}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Ds1Igt</RootNamespace>
-    <AssemblyName>Ds1Igt</AssemblyName>
-    <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
+    <RootNamespace>LiveSplit.DarkSoulsIGT</RootNamespace>
+    <AssemblyName>LiveSplit.DarkSoulsIGT</AssemblyName>
+    <TargetFrameworkVersion>v4.7.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
-    <OutputPath>bin\Debug\</OutputPath>
+    <OutputPath>C:\Users\Antoine\Documents\Livesplit\Components\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -31,7 +31,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="LiveSplit.Core">
-      <HintPath>E:\Downloads 2017\LiveSplit_1.7.5\LiveSplit.Core.dll</HintPath>
+      <HintPath>..\..\Livesplit.DarkSoulsInventoryReset\Livesplit.DarkSoulsInventoryReset\bin\Debug\LiveSplit.Core.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -44,27 +44,16 @@
     <Reference Include="System.Net.Http" />
     <Reference Include="System.Xml" />
     <Reference Include="UpdateManager">
-      <HintPath>E:\Downloads 2017\LiveSplit_1.7.5\UpdateManager.dll</HintPath>
+      <HintPath>..\..\Livesplit.DarkSoulsInventoryReset\Livesplit.DarkSoulsInventoryReset\bin\Debug\UpdateManager.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Config.cs" />
-    <Compile Include="Ds1Component.cs" />
-    <Compile Include="Ds1Control.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="Ds1Control.Designer.cs">
-      <DependentUpon>Ds1Control.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Ds1Factory.cs" />
-    <Compile Include="Ds1Pointer.cs" />
-    <Compile Include="Native.cs" />
+    <Compile Include="DSIGT.cs" />
+    <Compile Include="DSIGTComponent.cs" />
+    <Compile Include="DSIGTConfig.cs" />
+    <Compile Include="DSIGTFactory.cs" />
+    <Compile Include="DSIGTMemory.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Ds1Control.resx">
-      <DependentUpon>Ds1Control.cs</DependentUpon>
-    </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
