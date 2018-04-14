@@ -28,6 +28,7 @@ namespace LiveSplit.DarkSoulsIGT
         private void Reset()
         {
             localIGT = 0;
+            dsigt.Reset();
         }
 
         public override void Dispose()

@@ -53,6 +53,12 @@ namespace LiveSplit.DarkSoulsIGT
             Hook();
         }
 
+        public void Reset()
+        {
+            _IGT = 0;
+            _latch = true;
+        }
+
         private Process GetProcess()
         {
             Process tmp = null;
