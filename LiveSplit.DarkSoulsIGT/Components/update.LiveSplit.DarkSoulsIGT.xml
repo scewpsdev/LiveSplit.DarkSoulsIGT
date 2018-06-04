@@ -1,14 +1,4 @@
 ﻿<updates>
-  <update version="1.1.0.0">
-    <files>
-      <file path="Components/LiveSplit.DarkSoulsIGT.dll" status="changed" />
-    </files>
-    <changelog>
-      <change>
-        Dummy update
-      </change>
-    </changelog>
-  </update>
   <update version="1.0.0.0">
     <files>
       <file path="Components/LiveSplit.DarkSoulsIGT.dll" status="changed" />

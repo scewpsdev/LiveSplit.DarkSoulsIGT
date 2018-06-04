@@ -51,7 +51,6 @@ namespace LiveSplit.DarkSoulsIGT
 
         public DSIGT()
         {
-            MessageBox.Show("Succesful dummy update");
             Hook();
         }
 
