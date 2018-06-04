@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Diagnostics;
 using System.Linq;
+using System.Windows.Forms;
 
 namespace LiveSplit.DarkSoulsIGT
 {
@@ -50,6 +51,7 @@ namespace LiveSplit.DarkSoulsIGT
 
         public DSIGT()
         {
+            MessageBox.Show("Succesful dummy update");
             Hook();
         }
 
