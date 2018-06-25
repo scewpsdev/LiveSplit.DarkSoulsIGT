@@ -6,60 +6,66 @@ using System.Xml;
 
 namespace LiveSplit.DarkSoulsIGT
 {
-    public class DSIGTComponent : LogicComponent
+    public class DSComponent : LogicComponent
     {
         private LiveSplitState state;
+        private DSProcess gameProcess;
         private DSIGT dsigt;
-        private int localIGT;
+        private DSInventoryReset inventoryReset;
+        private DSSettings settings;
 
         public override string ComponentName => "Dark Souls In-Game Timer";
 
-        public DSIGTComponent(LiveSplitState state)
+        public DSComponent(LiveSplitState state)
         {
-            dsigt = new DSIGT();
-            localIGT = 0;
+            gameProcess = new DSProcess();
+            dsigt = new DSIGT(gameProcess);
+            inventoryReset = new DSInventoryReset(gameProcess);
+            settings = new DSSettings();
 
             this.state = state;
             this.state.IsGameTimePaused = true;
-            this.state.OnReset += (sender, value) => { Reset(); } ;
+            this.state.OnReset += (sender, value) => { Reset(); };
             this.state.OnStart += (sender, e) => { Reset(); };
         }
 
         private void Reset()
         {
-            localIGT = 0;
             dsigt.Reset();
+
+            if (settings.InventoryResetEnabled)
+            {
+                inventoryReset.ResetInventory();
+            }
         }
 
         public override void Dispose()
         {
-            dsigt.Unhook();
+            gameProcess.Dispose();
         }
 
         public override XmlNode GetSettings(XmlDocument document)
         {
-            return document.CreateElement("Settings");
+            return this.settings.GetSettings(document);
         }
 
         public override System.Windows.Forms.Control GetSettingsControl(LayoutMode mode)
         {
-            return null;
+            return this.settings;
         }
 
         public override void SetSettings(XmlNode settings)
         {
-
+            this.settings.SetSettings(settings);
         }
 
         public override void Update(IInvalidator invalidator, LiveSplitState state, float width, float height, LayoutMode mode)
         {
+            gameProcess.Update();
             if (state.CurrentPhase == TimerPhase.Running)
             {
-                localIGT = dsigt.IGT;
+                state.SetGameTime(new TimeSpan(0, 0, 0, 0, dsigt.IGT));
             }
-
-            state.IsGameTimePaused = true;
-            state.SetGameTime(new TimeSpan(0, 0, 0, 0, localIGT));
         }
     }
 }

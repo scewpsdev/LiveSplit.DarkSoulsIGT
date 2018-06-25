@@ -49,12 +49,27 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="DSIGT.cs" />
-    <Compile Include="DSIGTComponent.cs" />
-    <Compile Include="DSIGTConfig.cs" />
-    <Compile Include="DSIGTFactory.cs" />
-    <Compile Include="DSIGTMemory.cs" />
+    <Compile Include="IGT\DSIGT.cs" />
+    <Compile Include="DSComponent.cs" />
+    <Compile Include="DSConfig.cs" />
+    <Compile Include="DSFactory.cs" />
+    <Compile Include="DSMemory.cs" />
+    <Compile Include="DSProcess.cs" />
+    <Compile Include="IGT\DSIGTConfig.cs" />
+    <Compile Include="InventoryReset\DSInventoryIndexConfig.cs" />
+    <Compile Include="InventoryReset\DSInventoryReset.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="UI\DSSettings.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="UI\DSSettings.Designer.cs">
+      <DependentUpon>DSSettings.cs</DependentUpon>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="UI\DSSettings.resx">
+      <DependentUpon>DSSettings.cs</DependentUpon>
+    </EmbeddedResource>
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>
