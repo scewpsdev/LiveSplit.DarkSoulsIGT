@@ -16,7 +16,10 @@ namespace LiveSplit.DarkSoulsIGT
 
         private void GameProcess_ProcessHooked(object sender, EventArgs e)
         {
-            IRaddress = gameProcess.Scan(DSInventoryIndexConfig.ArrayOfBytes, DSInventoryIndexConfig.ArrayOfByteOffset);
+            byte?[] aob = DSInventoryIndexConfig.ArrayOfBytes[this.gameProcess.GameVersion];
+            int offset = DSInventoryIndexConfig.ArrayOfByteOffset[this.gameProcess.GameVersion];
+
+            IRaddress = gameProcess.Scan(aob, offset);
         }
 
         private void GameProcess_ProcessHasExited(object sender, EventArgs e)

@@ -8,6 +8,9 @@ namespace LiveSplit.DarkSoulsIGT
     internal static class DSMemory
     {
         #region [Memory functions]
+        [DllImport("kernel32.dll")]
+        public static extern bool IsWow64Process(IntPtr hProcess, out bool Wow64Process);
+
         [DllImport("kernel32.dll", SetLastError = true)]
         private static extern bool ReadProcessMemory(IntPtr hProcess, IntPtr lpBaseAddress, byte[] lpBuffer, int dwSize, ref int lpNumberOfBytesRead);
 
@@ -139,10 +142,16 @@ namespace LiveSplit.DarkSoulsIGT
             return results[0];
         }
 
-        public static IntPtr Scan(Process process, Dictionary<IntPtr, byte[]> readMemory, byte?[] aob, int offset)
+        public static IntPtr PrepareToDieScan(Process process, Dictionary<IntPtr, byte[]> readMemory, byte?[] aob, int offset)
         {
             IntPtr result = Scan(process, readMemory, aob);
-            return (IntPtr)RInt32(process.Handle, result + offset); // + offset + 4;
+            return (IntPtr)RInt32(process.Handle, result + offset);
+        }
+
+        public static IntPtr RemasteredScan(Process process, Dictionary<IntPtr, byte[]> readMemory, byte?[] aob, int offset)
+        {
+            IntPtr result = Scan(process, readMemory, aob);
+            return result + RInt32(process.Handle, result + offset) + offset + 4;
         }
         #endregion
     }

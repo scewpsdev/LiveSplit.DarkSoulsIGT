@@ -9,8 +9,8 @@ namespace LiveSplit.DarkSoulsIGT
 {
     internal class DSFactory : IComponentFactory
     {
-        public string ComponentName => "Dark Souls In-Game Timer";
-        public string Description => "Dark Souls In-Game Timer by Jiiks(jiiks.net) & CapitaineToinon";
+        public string ComponentName => "Dark Souls & Dark Souls: Remastered In-Game Timer";
+        public string Description => "Dark Souls & Dark Souls: Remastered In-Game Timer by CapitaineToinon";
         public string UpdateName => ComponentName;
 
         public ComponentCategory Category => ComponentCategory.Timer;

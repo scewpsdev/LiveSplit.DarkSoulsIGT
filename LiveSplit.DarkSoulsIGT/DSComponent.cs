@@ -14,7 +14,7 @@ namespace LiveSplit.DarkSoulsIGT
         private DSInventoryReset inventoryReset;
         private DSSettings settings;
 
-        public override string ComponentName => "Dark Souls In-Game Timer";
+        public override string ComponentName => "Dark Souls & Dark Souls: Remastered In-Game Timer";
 
         public DSComponent(LiveSplitState state)
         {
@@ -25,11 +25,11 @@ namespace LiveSplit.DarkSoulsIGT
 
             this.state = state;
             this.state.IsGameTimePaused = true;
-            this.state.OnReset += (sender, value) => { Reset(); };
-            this.state.OnStart += (sender, e) => { Reset(); };
+            this.state.OnStart += State_OnStart;
+            this.state.OnReset += State_OnReset;
         }
 
-        private void Reset()
+        private void State_OnStart(object sender, EventArgs e)
         {
             dsigt.Reset();
 
@@ -37,6 +37,11 @@ namespace LiveSplit.DarkSoulsIGT
             {
                 inventoryReset.ResetInventory();
             }
+        }
+
+        private void State_OnReset(object sender, TimerPhase value)
+        {
+            dsigt.Reset();
         }
 
         public override void Dispose()
@@ -61,7 +66,11 @@ namespace LiveSplit.DarkSoulsIGT
 
         public override void Update(IInvalidator invalidator, LiveSplitState state, float width, float height, LayoutMode mode)
         {
+            // https://github.com/LiveSplit/LiveSplit/issues/1302
+            state.IsGameTimePaused = true;
+
             gameProcess.Update();
+
             if (state.CurrentPhase == TimerPhase.Running)
             {
                 state.SetGameTime(new TimeSpan(0, 0, 0, 0, dsigt.IGT));

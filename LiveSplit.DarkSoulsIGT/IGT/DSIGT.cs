@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Diagnostics;
 
 namespace LiveSplit.DarkSoulsIGT
 {
@@ -8,44 +7,38 @@ namespace LiveSplit.DarkSoulsIGT
         private DSProcess gameProcess;
         private bool latch = true;
         private IntPtr IGTAddress;
-        private Stopwatch stopwatch = new Stopwatch();
-        private long lastUpdate;
 
-        private int _IGT = 0;
+        private int LocalIGT = 0;
         public int IGT
         {
             get
             {
                 if (gameProcess.IsHooked)
                 {
-                    // 60 times per seconds
-                    if (stopwatch.ElapsedMilliseconds - lastUpdate > DSIGTConfig.IGTRefreshRate)
+                    int offset = DSIGTConfig.Offset[this.gameProcess.GameVersion];
+
+                    IntPtr ptr = (IntPtr)DSMemory.RInt32(gameProcess.Process.Handle, IGTAddress);
+                    int tmpIGT = DSMemory.RInt32(gameProcess.Process.Handle, IntPtr.Add(ptr, offset));
+
+                    // If not in the main menu, update the timer normally
+                    if (tmpIGT > 0)
                     {
-                        IntPtr ptr = (IntPtr)DSMemory.RInt32(gameProcess.Process.Handle, IGTAddress);
-                        int tmpIGT = DSMemory.RInt32(gameProcess.Process.Handle, IntPtr.Add(ptr, DSIGTConfig.Offset));
+                        LocalIGT = tmpIGT;
+                        latch = false;
+                    }
 
-                        // If not in the main menu, update the timer normally
-                        if (tmpIGT > 0)
-                        {
-                            _IGT = tmpIGT;
-                            latch = false;
-                        }
-
-                        // If in the game menu and the timer hasn't be readjusted already...
-                        if (tmpIGT == 0 && !latch)
-                        {
-                            // When you quitout, the game saves the IGT to the savefile but the timer
-                            // actually keeps ticking for 18 more frames. So we remove that from the
-                            // actual timer.
-                            _IGT -= DSIGTConfig.TimerQuitoutDelay;
-                            latch = true;
-                        }
-
-                        lastUpdate = stopwatch.ElapsedMilliseconds;
+                    // If in the game menu and the timer hasn't be readjusted already...
+                    if (tmpIGT == 0 && !latch)
+                    {
+                        // When you quitout, the game saves the IGT to the savefile but the timer
+                        // actually keeps ticking for a few frames. So we remove that from the
+                        // actual timer.
+                        LocalIGT -= DSIGTConfig.TimerQuitoutDelay[this.gameProcess.GameVersion];
+                        latch = true;
                     }
                 }
 
-                return _IGT;
+                return LocalIGT;
             }
         }
 
@@ -58,24 +51,21 @@ namespace LiveSplit.DarkSoulsIGT
 
         private void GameProcess_ProcessHooked(object sender, EventArgs e)
         {
-            IGTAddress = gameProcess.Scan(DSIGTConfig.ArrayOfBytes, DSIGTConfig.ArrayOfByteOffset);
-            lastUpdate = 0;
-            stopwatch.Restart();
+            byte?[] aob = DSIGTConfig.ArrayOfBytes[this.gameProcess.GameVersion];
+            int offset = DSIGTConfig.ArrayOfByteOffset[this.gameProcess.GameVersion];
+
+            IGTAddress = gameProcess.Scan(aob, offset);
         }
 
         private void GameProcess_ProcessHasExited(object sender, EventArgs e)
         {
             IGTAddress = IntPtr.Zero;
-            lastUpdate = 0;
-            stopwatch.Stop();
         }
 
         public void Reset()
         {
-            _IGT = 0;
+            LocalIGT = 0;
             latch = true;
-            lastUpdate = 0;
-            stopwatch.Restart();
         }
     }
 }

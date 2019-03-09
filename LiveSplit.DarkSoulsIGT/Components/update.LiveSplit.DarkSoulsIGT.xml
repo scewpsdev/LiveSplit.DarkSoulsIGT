@@ -1,4 +1,20 @@
 ﻿<updates>
+  <update version="3.0.0.0">
+    <files>
+      <file path="Components/LiveSplit.DarkSoulsIGT.dll" status="changed" />
+    </files>
+    <changelog>
+      <change>
+        Merged the Dark Souls and Dark Souls: Remastered plugins into a single plugin.
+      </change>
+      <change>
+        Fixed the timer sometimes not working anymore after the game was closed. 
+      </change>
+      <change>
+        Fixed the timer flickers. 
+      </change>
+    </changelog>
+  </update>
   <update version="2.0.0.0">
     <files>
       <file path="Components/LiveSplit.DarkSoulsIGT.dll" status="changed" />
