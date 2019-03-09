@@ -46,7 +46,7 @@ namespace LiveSplit.DarkSoulsIGT
         private void cbxInventoryReset_MouseHover(object sender, EventArgs e)
         {
             ToolTip ToolTip1 = new ToolTip();
-            ToolTip1.SetToolTip(this.cbxInventoryReset, "Resets equipment inventory indexes when you start/reset a run as those normally carry over to other/new characters.");
+            ToolTip1.SetToolTip(this.cbxInventoryReset, "Resets equipment inventory indexes when you start a run as those normally carry over to other/new characters.");
         }
     }
 }

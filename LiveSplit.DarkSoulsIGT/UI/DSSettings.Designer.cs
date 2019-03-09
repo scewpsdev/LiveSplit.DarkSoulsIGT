@@ -71,7 +71,7 @@
             this.groupBox1.Size = new System.Drawing.Size(315, 49);
             this.groupBox1.TabIndex = 1;
             this.groupBox1.TabStop = false;
-            this.groupBox1.Text = "Equipement Indexes Reset";
+            this.groupBox1.Text = "Equipment Indexes Reset";
             // 
             // lblVersion
             // 

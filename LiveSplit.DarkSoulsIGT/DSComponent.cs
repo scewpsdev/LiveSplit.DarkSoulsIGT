@@ -18,35 +18,35 @@ namespace LiveSplit.DarkSoulsIGT
 
         public DSComponent(LiveSplitState state)
         {
-            gameProcess = new DSProcess();
-            dsigt = new DSIGT(gameProcess);
-            inventoryReset = new DSInventoryReset(gameProcess);
-            settings = new DSSettings();
+            this.gameProcess = new DSProcess();
+            this.dsigt = new DSIGT(this.gameProcess);
+            this.inventoryReset = new DSInventoryReset(this.gameProcess);
+            this.settings = new DSSettings();
 
             this.state = state;
-            this.state.IsGameTimePaused = true;
             this.state.OnStart += State_OnStart;
             this.state.OnReset += State_OnReset;
         }
 
         private void State_OnStart(object sender, EventArgs e)
         {
-            dsigt.Reset();
+            this.dsigt.Reset();
+            this.state.IsGameTimePaused = true;
 
             if (settings.InventoryResetEnabled)
             {
-                inventoryReset.ResetInventory();
+                this.inventoryReset.ResetInventory();
             }
         }
 
         private void State_OnReset(object sender, TimerPhase value)
         {
-            dsigt.Reset();
+            this.dsigt.Reset();
         }
 
         public override void Dispose()
         {
-            gameProcess.Dispose();
+            this.gameProcess.Dispose();
         }
 
         public override XmlNode GetSettings(XmlDocument document)
@@ -66,10 +66,7 @@ namespace LiveSplit.DarkSoulsIGT
 
         public override void Update(IInvalidator invalidator, LiveSplitState state, float width, float height, LayoutMode mode)
         {
-            // https://github.com/LiveSplit/LiveSplit/issues/1302
-            state.IsGameTimePaused = true;
-
-            gameProcess.Update();
+            this.gameProcess.Update();
 
             if (state.CurrentPhase == TimerPhase.Running)
             {
