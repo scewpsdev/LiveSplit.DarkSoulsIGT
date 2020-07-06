@@ -8,19 +8,15 @@ namespace LiveSplit.DarkSoulsIGT
 {
     public class DSComponent : LogicComponent
     {
+        private Model model;
         private LiveSplitState state;
-        private DSProcess gameProcess;
-        private DSIGT dsigt;
-        private DSInventoryReset inventoryReset;
         private DSSettings settings;
 
         public override string ComponentName => "Dark Souls & Dark Souls: Remastered In-Game Timer";
 
         public DSComponent(LiveSplitState state)
         {
-            this.gameProcess = new DSProcess();
-            this.dsigt = new DSIGT(this.gameProcess);
-            this.inventoryReset = new DSInventoryReset(this.gameProcess);
+            this.model = new Model();
             this.settings = new DSSettings();
 
             this.state = state;
@@ -30,23 +26,18 @@ namespace LiveSplit.DarkSoulsIGT
 
         private void State_OnStart(object sender, EventArgs e)
         {
-            this.dsigt.Reset();
             this.state.IsGameTimePaused = true;
+            model.Reset();
 
             if (settings.InventoryResetEnabled)
             {
-                this.inventoryReset.ResetInventory();
+                this.model.ResetIndexes();
             }
         }
 
         private void State_OnReset(object sender, TimerPhase value)
         {
-            this.dsigt.Reset();
-        }
-
-        public override void Dispose()
-        {
-            this.gameProcess.Dispose();
+            model.Reset();
         }
 
         public override XmlNode GetSettings(XmlDocument document)
@@ -66,12 +57,18 @@ namespace LiveSplit.DarkSoulsIGT
 
         public override void Update(IInvalidator invalidator, LiveSplitState state, float width, float height, LayoutMode mode)
         {
-            this.gameProcess.Update();
+            // Manually refresh the model because LiveSplit is taking care of the update loop
+            model.Refresh();
 
-            if (state.CurrentPhase == TimerPhase.Running)
+            if (this.state.CurrentPhase == TimerPhase.Running)
             {
-                state.SetGameTime(new TimeSpan(0, 0, 0, 0, dsigt.IGT));
+                this.state.SetGameTime(new TimeSpan(0, 0, 0, 0, this.model.GetInGameTime()));
             }
+        }
+
+        public override void Dispose()
+        {
+            // empty
         }
     }
 }
