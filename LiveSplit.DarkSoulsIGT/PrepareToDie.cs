@@ -17,10 +17,9 @@ namespace LiveSplit.DarkSoulsIGT
         /// </summary>
         private readonly byte[] AES_KEY = { 0x01, 0x23, 0x45, 0x67, 0x89, 0xAB, 0xCD, 0xEF, 0xFE, 0xDC, 0xBA, 0x98, 0x76, 0x54, 0x32, 0x10 };
         private const string CHR_DATA_AOB = "83 EC 14 A1 ? ? ? ? 8B 48 04 8B 40 08 53 55 56 57 89 4C 24 1C 89 44 24 20 3B C8";
-        private const string IGT_AOB = "8B 0D ? ? ? ? 8B 7E 1C 8B 49 08 8B 46 20 81 C1 B8 01 00 00 57 51 32 DB";
+        private const string CHAR_CLASS_BASE_AOB = "8B 0D ? ? ? ? 8B 7E 1C 8B 49 08 8B 46 20 81 C1 B8 01 00 00 57 51 32 DB";
         private const string CURRENT_SLOT_AOB = "8B 0D ? ? ? ? 80 B9 4F 0B 00 00 00 C6 44 24 28 00";
         private const string INVENTORY_RESET_AOB = "8B 4C 24 34 8B 44 24 2C 89 8A 38 01 00 00 8B 90 08 01 00 00 C1 E2 10 0B 90 00 01 00 00 8B C1 8B CD 89 14 AD ? ? ? ?";
-        private const string NG_COUNT_AOB = "8B 15 ? ? ? ? 0F 57 ED 0F 57 F6 8D 9B 00 00 00 00 F7 41 14 03 00 0C 80";
 
         /// <summary>
         /// Constructor
@@ -30,9 +29,8 @@ namespace LiveSplit.DarkSoulsIGT
         public PrepareToDie(PHook process) : base(process)
         {
             // Set pointers
-            pIGT = Process.RegisterAbsoluteAOB(IGT_AOB, 2, 0);
+            pCharClassBase = Process.RegisterAbsoluteAOB(CHAR_CLASS_BASE_AOB, 2, 0);
             pInventoryReset = Process.RegisterAbsoluteAOB(INVENTORY_RESET_AOB, 36);
-            pNgCount = Process.RegisterAbsoluteAOB(NG_COUNT_AOB, 2, 0);
             pLoaded = Process.RegisterAbsoluteAOB(CHR_DATA_AOB, 4, 0, 0x4, 0x0);
             pCurrentSlot = Process.RegisterAbsoluteAOB(CURRENT_SLOT_AOB, 2, 0);
 
@@ -45,7 +43,7 @@ namespace LiveSplit.DarkSoulsIGT
         /// <returns></returns>
         public override int MemoryIGT
         {
-            get => pIGT.ReadInt32(0x68);
+            get => pCharClassBase.ReadInt32(0x68);
         }
 
         /// <summary>
@@ -55,22 +53,13 @@ namespace LiveSplit.DarkSoulsIGT
         {
             get => pCurrentSlot.ReadInt32(0xA70);
         }
-
+        
         /// <summary>
         /// Current new game count
         /// </summary>
         public override int NgCount
         {
-            get => pNgCount.ReadInt32(0x3C);
-        }
-
-        public override string SaveFilePath
-        {
-            get
-            {
-                var MyDocuments = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
-                return Path.Combine(MyDocuments, "NBGI\\DarkSouls\\DRAKS0005.sl2").ToString();
-            }
+            get => pCharClassBase.ReadInt32(0x003C);
         }
 
         /// <summary>
@@ -80,13 +69,17 @@ namespace LiveSplit.DarkSoulsIGT
         /// <returns></returns>
         public override int GetCurrentSlotIGT(int slot = 0)
         {
-            int igt = 0;
+            int igt = -1;
 
-            if (slot >= 0 && slot <= 10)
+            var MyDocuments = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
+            var path = Path.Combine(MyDocuments, "NBGI\\DarkSouls").ToString();
+            var candidates = Directory.GetFiles(path, "DRAKS0005.sl2", SearchOption.AllDirectories);
+
+            foreach (var candidate in candidates)
             {
                 try
                 {
-                    byte[] file = File.ReadAllBytes(SaveFilePath);
+                    byte[] file = File.ReadAllBytes(candidate);
                     int saveSlotSize = 0x60020;
 
                     // Seems like GFWL files have a different slot size
@@ -95,10 +88,10 @@ namespace LiveSplit.DarkSoulsIGT
 
                     int igtOffset = 0x2dc + saveSlotSize * CurrentSaveSlot;
                     igt = BitConverter.ToInt32(file, igtOffset);
-                }
-                catch
+                    break;
+                } catch
                 {
-                    igt = 0;
+                    // nothing, try the next candidate
                 }
             }
 

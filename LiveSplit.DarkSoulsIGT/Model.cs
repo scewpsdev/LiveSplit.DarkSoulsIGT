@@ -84,6 +84,17 @@ namespace LiveSplit.DarkSoulsIGT
         }
 
         /// <summary>
+        /// Dispose
+        /// </summary>
+        public void Dispose()
+        {
+            if (Process != null)
+            {
+                Process.Dispose();
+            }
+        }
+
+        /// <summary>
         /// Reset some variables when needed
         /// </summary>
         public void Reset()
@@ -145,8 +156,12 @@ namespace LiveSplit.DarkSoulsIGT
                     {
                         // When credits are rolling, to be consistent with ALTF4
                         // we read the IGT from the savefile instead of the memory
-                        localIGT = DarkSouls.GetCurrentSlotIGT(DarkSouls.CurrentSaveSlot);
-                        creditsRolling = true;
+                        var fileIGT = DarkSouls.GetCurrentSlotIGT(DarkSouls.CurrentSaveSlot);
+                        if (fileIGT != -1)
+                        {
+                            localIGT = fileIGT;
+                            creditsRolling = true;
+                        }
                     }
 
                     if (creditsRolling && DarkSouls.Loaded)
@@ -161,8 +176,12 @@ namespace LiveSplit.DarkSoulsIGT
                 {
                     // When quitout, the IGT in memory is 0 so we read IGT from
                     // the savefile instead
-                    localIGT = DarkSouls.GetCurrentSlotIGT(DarkSouls.CurrentSaveSlot);
-                    quitoutLatch = true;
+                    var fileIGT = DarkSouls.GetCurrentSlotIGT(DarkSouls.CurrentSaveSlot);
+                    if (fileIGT != -1)
+                    {
+                        localIGT = fileIGT;
+                        quitoutLatch = true;
+                    }
                 }
             }
 

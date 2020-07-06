@@ -1,12 +1,8 @@
 ﻿using System;
 using PropertyHook;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.IO;
 using System.Security.Cryptography;
-using System.Linq;
+using LiveSplit.ComponentUtil;
 
 namespace LiveSplit.DarkSoulsIGT
 {
@@ -16,13 +12,10 @@ namespace LiveSplit.DarkSoulsIGT
         /// Constants
         /// </summary>
         private byte[] AES_KEY = { 0x01, 0x23, 0x45, 0x67, 0x89, 0xAB, 0xCD, 0xEF, 0xFE, 0xDC, 0xBA, 0x98, 0x76, 0x54, 0x32, 0x10 };
-        private const string CHR_DATA_AOB = "48 8B 0D ? ? ? ? E8 ? ? ? ? 48 8B 4E 68 48 8B 05 ? ? ? ? 48 89 48 60";
         private const string CHR_FOLLOW_CAM_AOB = "48 8B 0D ? ? ? ? E8 ? ? ? ? 48 8B 4E 68 48 8B 05 ? ? ? ? 48 89 48 60";
         private const string INVENTORY_RESET_AOB = "4C 8B 65 EF 4C 8B 6D 0F 49 63 C6 48 8D 0D ? ? ? ? 8B 14 81 83 FA FF";
-        private const string BASE_PTR_AOB = "48 8B 05 ? ? ? ? 48 85 C0 ? ? F3 0F 58 80 AC 00 00 00";
+        private const string CHR_CLASS_BASE_AOB = "48 8B 05 ? ? ? ? 48 85 C0 ? ? F3 0F 58 80 AC 00 00 00";
         private const string CHR_CLASS_WARP_AOB = "48 8B 05 ? ? ? ? 66 0F 7F 80 A0 0B 00 00 0F 28 02 66 0F 7F 80 B0 0B 00 00 C6 80";
-
-        private PHPointer pBasePtr { get; set; }
 
         /// <summary>
         /// Constructor
@@ -32,13 +25,10 @@ namespace LiveSplit.DarkSoulsIGT
         public Remastered(PHook process) : base(process)
         {
             // Set pointers
-            pBasePtr = Process.RegisterRelativeAOB(BASE_PTR_AOB, 3, 7);
+            pCharClassBase = Process.RegisterRelativeAOB(CHR_CLASS_BASE_AOB, 3, 7, 0);
             pLoaded = Process.RegisterRelativeAOB(CHR_FOLLOW_CAM_AOB, 3, 7, 0, 0x60, 0x60);
             pInventoryReset = Process.RegisterRelativeAOB(INVENTORY_RESET_AOB, 14, 0);
             pCurrentSlot = Process.RegisterRelativeAOB(CHR_CLASS_WARP_AOB, 3, 0, 7);
-
-            pIGT = Process.CreateChildPointer(pBasePtr, 0);
-            pNgCount = Process.CreateChildPointer(pBasePtr, 0);
 
             Process.RescanAOB();
         }
@@ -49,7 +39,7 @@ namespace LiveSplit.DarkSoulsIGT
         /// <returns></returns>
         public override int MemoryIGT
         {
-            get => pIGT.ReadInt32(0xA4);
+            get => pCharClassBase.ReadInt32(0xA4);
         }
 
         /// <summary>
@@ -65,19 +55,7 @@ namespace LiveSplit.DarkSoulsIGT
         /// </summary>
         public override int NgCount
         {
-            get => pNgCount.ReadInt32(0x78);
-        }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        public override string SaveFilePath
-        {
-            get
-            {
-                var MyDocuments = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
-                return Path.Combine(MyDocuments, "NBGI\\DARK SOULS REMASTERED\\84341421\\DRAKS0005.sl2").ToString();
-            }
+            get => pCharClassBase.ReadInt32(0x78);
         }
 
         /// <summary>
@@ -87,21 +65,26 @@ namespace LiveSplit.DarkSoulsIGT
         /// <returns></returns>
         public override int GetCurrentSlotIGT(int slot = 0)
         {
-            int igt = 0;
+            int igt = -1;
 
-            if (slot >= 0 && slot <= 10)
+            var MyDocuments = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
+            var path = Path.Combine(MyDocuments, "NBGI\\DARK SOULS REMASTERED").ToString();
+            var candidates = Directory.GetFiles(path, "DRAKS0005.sl2", SearchOption.AllDirectories);
+
+            foreach (var candidate in candidates)
             {
                 try
                 {
-                    byte[] file = File.ReadAllBytes(SaveFilePath);
-                    byte[] decrypted = DecryptSL2(file, AES_KEY, AES_KEY);
+                    byte[] file = File.ReadAllBytes(candidate);
+                    file = DecryptSL2(file, AES_KEY, AES_KEY);
                     int saveSlotSize = 0x60030;
                     int igtOffset = 0x2EC + saveSlotSize * CurrentSaveSlot;
-                    igt = BitConverter.ToInt32(decrypted, igtOffset);
+                    igt = BitConverter.ToInt32(file, igtOffset);
+                    break;
                 }
                 catch
                 {
-                    igt = 0;
+                    // nothing, try the next candidate
                 }
             }
 

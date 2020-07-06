@@ -16,8 +16,8 @@ namespace LiveSplit.DarkSoulsIGT
 
         public DSComponent(LiveSplitState state)
         {
-            this.model = new Model();
-            this.settings = new DSSettings();
+            model = new Model();
+            settings = new DSSettings();
 
             this.state = state;
             this.state.OnStart += State_OnStart;
@@ -26,12 +26,12 @@ namespace LiveSplit.DarkSoulsIGT
 
         private void State_OnStart(object sender, EventArgs e)
         {
-            this.state.IsGameTimePaused = true;
+            state.IsGameTimePaused = true;
             model.Reset();
 
             if (settings.InventoryResetEnabled)
             {
-                this.model.ResetIndexes();
+                model.ResetIndexes();
             }
         }
 
@@ -42,12 +42,12 @@ namespace LiveSplit.DarkSoulsIGT
 
         public override XmlNode GetSettings(XmlDocument document)
         {
-            return this.settings.GetSettings(document);
+            return settings.GetSettings(document);
         }
 
         public override System.Windows.Forms.Control GetSettingsControl(LayoutMode mode)
         {
-            return this.settings;
+            return settings;
         }
 
         public override void SetSettings(XmlNode settings)
@@ -62,13 +62,13 @@ namespace LiveSplit.DarkSoulsIGT
 
             if (this.state.CurrentPhase == TimerPhase.Running)
             {
-                this.state.SetGameTime(new TimeSpan(0, 0, 0, 0, this.model.GetInGameTime()));
+                this.state.SetGameTime(new TimeSpan(0, 0, 0, 0, model.GetInGameTime()));
             }
         }
 
         public override void Dispose()
         {
-            // empty
+            model.Dispose();
         }
     }
 }

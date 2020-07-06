@@ -42,19 +42,14 @@ namespace LiveSplit.DarkSoulsIGT
         public PHook Process { get; set; }
 
         /// <summary>
-        /// Pointers to IGT
+        /// Pointers to CharClassBase
         /// </summary>
-        public PHPointer pIGT { get; set; }
+        public PHPointer pCharClassBase { get; set; }
 
         /// <summary>
         /// Pointers to inventory indexes
         /// </summary>
         public PHPointer pInventoryReset { get; set; }
-
-        /// <summary>
-        /// Pointers to new game counter
-        /// </summary>
-        public PHPointer pNgCount { get; set; }
 
         /// <summary>
         /// Pointers to current slot index
@@ -116,14 +111,6 @@ namespace LiveSplit.DarkSoulsIGT
         /// Current Save Slot index
         /// </summary>
         public abstract int CurrentSaveSlot
-        {
-            get;
-        }
-
-        /// <summary>
-        /// Path to the savefile
-        /// </summary>
-        public abstract string SaveFilePath
         {
             get;
         }
