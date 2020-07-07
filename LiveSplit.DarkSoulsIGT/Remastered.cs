@@ -2,7 +2,7 @@
 using PropertyHook;
 using System.IO;
 using System.Security.Cryptography;
-using LiveSplit.ComponentUtil;
+using System.Diagnostics;
 
 namespace LiveSplit.DarkSoulsIGT
 {
@@ -31,6 +31,27 @@ namespace LiveSplit.DarkSoulsIGT
             pCurrentSlot = Process.RegisterRelativeAOB(CHR_CLASS_WARP_AOB, 3, 0, 7);
 
             Process.RescanAOB();
+        }
+
+        /// <summary>
+        /// SteamID3 used for savefile location
+        /// </summary>
+        public int SteamID3
+        {
+            get {
+                int id = 0;
+
+                foreach (ProcessModule item in Process.Process.Modules)
+                {
+                    if (item.ModuleName == "steam_api64.dll")
+                    {
+                        id = Process.CreateBasePointer(Process.Handle, 0).ReadInt32((int)item.BaseAddress + 0x38E58);
+                        break;
+                    }
+                }
+
+                return id;
+            }
         }
 
         /// <summary>
@@ -68,7 +89,14 @@ namespace LiveSplit.DarkSoulsIGT
             int igt = -1;
 
             var MyDocuments = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
-            var path = Path.Combine(MyDocuments, "NBGI\\DARK SOULS REMASTERED").ToString();
+            var path = Path.Combine(MyDocuments, "NBGI\\DARK SOULS REMASTERED");
+            var steamID3 = SteamID3;
+            
+            if (steamID3 != 0)
+            {
+                path = Path.Combine(path, $"{steamID3}");
+            }
+
             var candidates = Directory.GetFiles(path, "DRAKS0005.sl2", SearchOption.AllDirectories);
 
             foreach (var candidate in candidates)
