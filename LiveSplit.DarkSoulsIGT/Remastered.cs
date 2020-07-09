@@ -3,6 +3,7 @@ using PropertyHook;
 using System.IO;
 using System.Security.Cryptography;
 using System.Diagnostics;
+using System.Linq;
 
 namespace LiveSplit.DarkSoulsIGT
 {
@@ -103,8 +104,9 @@ namespace LiveSplit.DarkSoulsIGT
             {
                 try
                 {
+                    // Each USERDATA file is individually AES - 128 - CBC encrypted.
                     byte[] file = File.ReadAllBytes(candidate);
-                    file = DecryptSL2(file, AES_KEY, AES_KEY);
+                    file = DecryptSL2(file, AES_KEY, file.Take(16).ToArray());
                     int saveSlotSize = 0x60030;
                     int igtOffset = 0x2EC + saveSlotSize * CurrentSaveSlot;
                     igt = BitConverter.ToInt32(file, igtOffset);
@@ -113,6 +115,7 @@ namespace LiveSplit.DarkSoulsIGT
                 catch
                 {
                     // nothing, try the next candidate
+                    igt = -1;
                 }
             }
 
