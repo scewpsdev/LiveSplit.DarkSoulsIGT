@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using System.IO;
 using LiveSplit.ComponentUtil;
 using System.Security.Cryptography;
+using System.Windows.Forms;
 
 namespace LiveSplit.DarkSoulsIGT
 {
@@ -20,6 +21,10 @@ namespace LiveSplit.DarkSoulsIGT
         private const string CHAR_CLASS_BASE_AOB = "8B 0D ? ? ? ? 8B 7E 1C 8B 49 08 8B 46 20 81 C1 B8 01 00 00 57 51 32 DB";
         private const string CURRENT_SLOT_AOB = "8B 0D ? ? ? ? 80 B9 4F 0B 00 00 00 C6 44 24 28 00";
         private const string INVENTORY_RESET_AOB = "8B 4C 24 34 8B 44 24 2C 89 8A 38 01 00 00 8B 90 08 01 00 00 C1 E2 10 0B 90 00 01 00 00 8B C1 8B CD 89 14 AD ? ? ? ?";
+        private const string SL2_INFORMATION_AOB = "00 00 00 00 66 89 0D ? ? ? ? C3 CC CC CC CC CC 83 3D";
+
+        // lmao
+        public PHPointer pSL2 { get; set; }
 
         /// <summary>
         /// Constructor
@@ -33,8 +38,17 @@ namespace LiveSplit.DarkSoulsIGT
             pInventoryReset = Process.RegisterAbsoluteAOB(INVENTORY_RESET_AOB, 36);
             pLoaded = Process.RegisterAbsoluteAOB(CHR_DATA_AOB, 4, 0, 0x4, 0x0);
             pCurrentSlot = Process.RegisterAbsoluteAOB(CURRENT_SLOT_AOB, 2, 0);
+            pSL2 = Process.RegisterAbsoluteAOB(SL2_INFORMATION_AOB, 7);
 
             Process.RescanAOB();
+        }
+
+        /// <summary>
+        /// Rollback value, used as a fallback
+        /// </summary>
+        public override int QuitoutRollback
+        {
+            get => 594;
         }
 
         /// <summary>
@@ -63,36 +77,61 @@ namespace LiveSplit.DarkSoulsIGT
         }
 
         /// <summary>
+        /// Read a Unicode string from the memory
+        /// </summary>
+        /// <param name="pointer"></param>
+        /// <returns></returns>
+        private string ReadUnicode(PHPointer pointer)
+        {
+            var buff = new List<byte>(128);
+
+            for (int i = 0; ; i += 2)
+            {
+                byte[] b = pointer.ReadBytes(i, 2);
+                if (b[0] == 0 && b[1] == 0)
+                    break;
+                buff.AddRange(b);
+            }
+
+            return Encoding.Unicode.GetString(buff.ToArray());
+        }
+
+        /// <summary>
         /// Returns the IGT of a specific slot in the game's savefile
         /// </summary>
         /// <param name="slot"></param>
         /// <returns></returns>
         public override int GetCurrentSlotIGT(int slot = 0)
         {
-            int igt = -1;
+            int igt;
 
-            var MyDocuments = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
-            var path = Path.Combine(MyDocuments, "NBGI\\DarkSouls").ToString();
-            var candidates = Directory.GetFiles(path, "DRAKS0005.sl2", SearchOption.AllDirectories);
-
-            foreach (var candidate in candidates)
+            try
             {
-                try
-                {
-                    byte[] file = File.ReadAllBytes(candidate);
-                    int saveSlotSize = 0x60020;
+                var MyDocuments = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
+                var path = Path.Combine(MyDocuments, "NBGI\\DarkSouls").ToString();
+                var variable = pSL2.ReadInt32(0x10);
+                var memes = ReadUnicode(Process.CreateChildPointer(pSL2, 0x20));
 
-                    // Seems like GFWL files have a different slot size
-                    if (file.Length != 4326432)
-                        saveSlotSize = 0x60190;
-
-                    int igtOffset = 0x2dc + saveSlotSize * CurrentSaveSlot;
-                    igt = BitConverter.ToInt32(file, igtOffset);
-                    break;
-                } catch
+                if (variable != 0)
                 {
-                    // nothing, try the next candidate
+                    string gfwl_id = ReadUnicode(Process.CreateChildPointer(pSL2, 0x0));
+                    path = Path.Combine(path, gfwl_id);
                 }
+
+                path = Path.Combine(path, "DRAKS0005.sl2");
+
+                byte[] file = File.ReadAllBytes(path);
+                int saveSlotSize = 0x60020;
+
+                // Seems like GFWL files have a different slot size
+                if (file.Length != 4326432)
+                    saveSlotSize = 0x60190;
+
+                int igtOffset = 0x2dc + saveSlotSize * CurrentSaveSlot;
+                igt = BitConverter.ToInt32(file, igtOffset);
+            } catch
+            {
+                igt = -1;
             }
 
             return igt;

@@ -56,6 +56,14 @@ namespace LiveSplit.DarkSoulsIGT
         }
 
         /// <summary>
+        /// Rollback value, used as a fallback
+        /// </summary>
+        public override int QuitoutRollback
+        {
+            get => 512;
+        }
+
+        /// <summary>
         /// Returns the raw IGT from Memory
         /// </summary>
         /// <returns></returns>

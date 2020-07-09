@@ -26,6 +26,7 @@ namespace LiveSplit.DarkSoulsIGT
         /// </summary>
         private int localIGT;
         private bool quitoutLatch;
+        private bool creditsLatch;
         private int previousNgCount;
         private bool ngChanged;
         private bool creditsRolling;
@@ -101,6 +102,7 @@ namespace LiveSplit.DarkSoulsIGT
         {
             localIGT = 0;
             quitoutLatch = true;
+            creditsLatch = false;
             ngChanged = false;
             creditsRolling = false;
 
@@ -122,7 +124,9 @@ namespace LiveSplit.DarkSoulsIGT
         }
 
         /// <summary>
-        /// Returns the IGT with pauses on quitouts
+        /// Returns the IGT
+        /// Reads the savefile's IGT on quitouts and credits
+        /// Reads the memory IGT otherwise
         /// </summary>
         public int GetInGameTime()
         {
@@ -130,61 +134,71 @@ namespace LiveSplit.DarkSoulsIGT
             {
                 int _tmpIGT = DarkSouls.MemoryIGT;
                 int _tmpNgCount = DarkSouls.NgCount;
+                bool _isLoaded = DarkSouls.Loaded;
 
-                // Check if credits just started rolling
-                if (!ngChanged && !creditsRolling)
+                // If IGT is running
+                if (_tmpIGT > 0)
                 {
-                    // If game was beaten
+                    // then we're not on a quitout
+                    quitoutLatch = false;
+
+                    // Check if NG increased since last update (in-game cutscene is playing)
                     if (_tmpNgCount > previousNgCount)
                     {
-                        ngChanged = true;
+                        // Final in-game cutscene is playing, just keep using memory IGT
+                        if (_isLoaded && !creditsRolling)
+                        {
+                            localIGT = _tmpIGT;
+                            return localIGT;
+                        }
+
+                        // if the player isn't loaded, then credits are playing (video cutscene is playing)
+                        if (!_isLoaded && !creditsRolling)
+                        {                          
+                            int fileIGT = DarkSouls.GetCurrentSlotIGT(DarkSouls.CurrentSaveSlot);
+                            if (fileIGT != -1)
+                            {
+                                creditsRolling = true;
+                                localIGT = fileIGT;
+                                return localIGT;
+                            }
+                        }
+
+                        // if we aren't loaded but creditsRolling is true
+                        // then it means credits are over. 
+                        if (_isLoaded && creditsRolling)
+                        {
+                            creditsRolling = false;
+                            previousNgCount = _tmpNgCount;
+                            localIGT = _tmpIGT;
+                            return localIGT;
+                        }
+                    } else
+                    {
+                        // game running normally
+                        return _tmpIGT;
                     }
                 }
 
-                // Update IGT normally with the latch logic
-                // If not in the main menu, update the timer normally
-                if (_tmpIGT > 0 && !creditsRolling)
+                // IGT is always at 0 during quitouts
+                if (_tmpIGT == 0)
                 {
-                    // Update IGT normally
-                    localIGT = _tmpIGT;
-                    quitoutLatch = false;
-                }
-
-                if (_tmpIGT > 0 && ngChanged)
-                {
-                    if (!DarkSouls.Loaded)
+                    // fix the IGT only once per quitout
+                    if (!quitoutLatch)
                     {
-                        // When credits are rolling, to be consistent with ALTF4
-                        // we read the IGT from the savefile instead of the memory
-                        var fileIGT = DarkSouls.GetCurrentSlotIGT(DarkSouls.CurrentSaveSlot);
+                        int fileIGT = DarkSouls.GetCurrentSlotIGT(DarkSouls.CurrentSaveSlot);
                         if (fileIGT != -1)
                         {
+                            quitoutLatch = true;
                             localIGT = fileIGT;
-                            creditsRolling = true;
+                            return localIGT;
                         }
-                    }
-
-                    if (creditsRolling && DarkSouls.Loaded)
-                    {
-                        creditsRolling = false;
-                        ngChanged = false;
-                    }
-                }
-
-                // If in the game menu...
-                if (_tmpIGT == 0 && !quitoutLatch)
-                {
-                    // When quitout, the IGT in memory is 0 so we read IGT from
-                    // the savefile instead
-                    var fileIGT = DarkSouls.GetCurrentSlotIGT(DarkSouls.CurrentSaveSlot);
-                    if (fileIGT != -1)
-                    {
-                        localIGT = fileIGT;
-                        quitoutLatch = true;
                     }
                 }
             }
 
+            // If not ready, return whatever IGT we had on previous update
+            // Game may be closed
             return localIGT;
         }
 

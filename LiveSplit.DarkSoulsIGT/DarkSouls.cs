@@ -99,6 +99,14 @@ namespace LiveSplit.DarkSoulsIGT
         public abstract int GetCurrentSlotIGT(int slot = 0);
 
         /// <summary>
+        /// Rollback value, used as a fallback
+        /// </summary>
+        public abstract int QuitoutRollback
+        {
+            get;
+        }
+
+        /// <summary>
         /// Returns the raw IGT from Memory
         /// </summary>
         /// <returns></returns>
