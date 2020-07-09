@@ -42,12 +42,15 @@ namespace LiveSplit.DarkSoulsIGT
             get {
                 int id = 0;
 
-                foreach (ProcessModule item in Process.Process.Modules)
+                if (Process.Hooked)
                 {
-                    if (item.ModuleName == "steam_api64.dll")
+                    foreach (ProcessModule item in Process.Process.Modules)
                     {
-                        id = Process.CreateBasePointer(Process.Handle, 0).ReadInt32((int)item.BaseAddress + 0x38E58);
-                        break;
+                        if (item.ModuleName == "steam_api64.dll")
+                        {
+                            id = Process.CreateBasePointer(Process.Handle, 0).ReadInt32((int)item.BaseAddress + 0x38E58);
+                            break;
+                        }
                     }
                 }
 
@@ -91,40 +94,35 @@ namespace LiveSplit.DarkSoulsIGT
         /// <summary>
         /// Returns the IGT of a specific slot in the game's savefile
         /// </summary>
-        /// <param name="slot"></param>
-        /// <returns></returns>
+        /// <param name="slot">The slot ID to access, from 0 to 10</param>
+        /// <returns>Returns the IGT of the selected slot. Returns -1 if an error happened</returns>
         public override int GetCurrentSlotIGT(int slot = 0)
         {
-            int igt = -1;
+            int igt;
 
             var MyDocuments = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
+            var japan = Path.Combine(MyDocuments, "FromSoftware\\DARK SOULS REMASTERED");
             var path = Path.Combine(MyDocuments, "NBGI\\DARK SOULS REMASTERED");
-            var steamID3 = SteamID3;
-            
-            if (steamID3 != 0)
+
+            if (Directory.Exists(japan))
             {
-                path = Path.Combine(path, $"{steamID3}");
+                path = japan;
             }
 
-            var candidates = Directory.GetFiles(path, "DRAKS0005.sl2", SearchOption.AllDirectories);
+            path = Path.Combine(path, $"{SteamID3}\\DRAKS0005.sl2");
 
-            foreach (var candidate in candidates)
+            try
             {
-                try
-                {
-                    // Each USERDATA file is individually AES - 128 - CBC encrypted.
-                    byte[] file = File.ReadAllBytes(candidate);
-                    file = DecryptSL2(file, AES_KEY, file.Take(16).ToArray());
-                    int saveSlotSize = 0x60030;
-                    int igtOffset = 0x2EC + saveSlotSize * CurrentSaveSlot;
-                    igt = BitConverter.ToInt32(file, igtOffset);
-                    break;
-                }
-                catch
-                {
-                    // nothing, try the next candidate
-                    igt = -1;
-                }
+                // Each USERDATA file is individually AES - 128 - CBC encrypted.
+                byte[] file = File.ReadAllBytes(path);
+                file = DecryptSL2(file);
+                int saveSlotSize = 0x60030;
+                int igtOffset = 0x2EC + saveSlotSize * CurrentSaveSlot;
+                igt = BitConverter.ToInt32(file, igtOffset);
+            }
+            catch
+            {
+                igt = -1;
             }
 
             return igt;
@@ -137,16 +135,16 @@ namespace LiveSplit.DarkSoulsIGT
         /// <param name="key"></param>
         /// <param name="iv"></param>
         /// <returns></returns>
-        private byte[] DecryptSL2(byte[] cipherBytes, byte[] key, byte[] iv)
+        private byte[] DecryptSL2(byte[] cipherBytes)
         {
             Aes encryptor = Aes.Create();
             encryptor.Mode = CipherMode.CBC;
 
             // Set key and IV
             byte[] aesKey = new byte[16];
-            Array.Copy(key, 0, aesKey, 0, 16);
+            Array.Copy(AES_KEY, 0, aesKey, 0, 16);
             encryptor.Key = aesKey;
-            encryptor.IV = iv;
+            encryptor.IV = cipherBytes.Take(16).ToArray();
 
             MemoryStream memoryStream = new MemoryStream();
             ICryptoTransform aesDecryptor = encryptor.CreateDecryptor();

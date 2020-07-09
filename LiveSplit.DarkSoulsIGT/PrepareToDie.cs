@@ -1,13 +1,8 @@
 ﻿using System;
 using PropertyHook;
 using System.Collections.Generic;
-using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 using System.IO;
-using LiveSplit.ComponentUtil;
-using System.Security.Cryptography;
-using System.Windows.Forms;
 
 namespace LiveSplit.DarkSoulsIGT
 {
@@ -16,7 +11,6 @@ namespace LiveSplit.DarkSoulsIGT
         /// <summary>
         /// Constants
         /// </summary>
-        private readonly byte[] AES_KEY = { 0x01, 0x23, 0x45, 0x67, 0x89, 0xAB, 0xCD, 0xEF, 0xFE, 0xDC, 0xBA, 0x98, 0x76, 0x54, 0x32, 0x10 };
         private const string CHR_DATA_AOB = "83 EC 14 A1 ? ? ? ? 8B 48 04 8B 40 08 53 55 56 57 89 4C 24 1C 89 44 24 20 3B C8";
         private const string CHAR_CLASS_BASE_AOB = "8B 0D ? ? ? ? 8B 7E 1C 8B 49 08 8B 46 20 81 C1 B8 01 00 00 57 51 32 DB";
         private const string CURRENT_SLOT_AOB = "8B 0D ? ? ? ? 80 B9 4F 0B 00 00 00 C6 44 24 28 00";
@@ -99,8 +93,8 @@ namespace LiveSplit.DarkSoulsIGT
         /// <summary>
         /// Returns the IGT of a specific slot in the game's savefile
         /// </summary>
-        /// <param name="slot"></param>
-        /// <returns></returns>
+        /// <param name="slot">The slot ID to access, from 0 to 10</param>
+        /// <returns>Returns the IGT of the selected slot. Returns -1 if an error happened</returns>
         public override int GetCurrentSlotIGT(int slot = 0)
         {
             int igt;
@@ -108,9 +102,8 @@ namespace LiveSplit.DarkSoulsIGT
             try
             {
                 var MyDocuments = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
-                var path = Path.Combine(MyDocuments, "NBGI\\DarkSouls").ToString();
+                var path = Path.Combine(MyDocuments, "NBGI\\DarkSouls");
                 var variable = pSL2.ReadInt32(0x10);
-                var memes = ReadUnicode(Process.CreateChildPointer(pSL2, 0x20));
 
                 if (variable != 0)
                 {

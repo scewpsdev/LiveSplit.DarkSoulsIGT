@@ -18,7 +18,7 @@ namespace LiveSplit.DarkSoulsIGT
         private const string PTDE_NAME = "DARKSOULS";
         private const string REMASTERED_NAME = "DARK SOULS™: REMASTERED";
         private const int UNHOOKED_INTERVAL = 1000;
-        private const int HOOKED_INTERVAL = 33;
+        private const int HOOKED_INTERVAL = 16;
         private const int MIN_LIFE_SPAN = 5000;
 
         /// <summary>
@@ -26,9 +26,7 @@ namespace LiveSplit.DarkSoulsIGT
         /// </summary>
         private int localIGT;
         private bool quitoutLatch;
-        private bool creditsLatch;
         private int previousNgCount;
-        private bool ngChanged;
         private bool creditsRolling;
 
         /// <summary>
@@ -102,8 +100,6 @@ namespace LiveSplit.DarkSoulsIGT
         {
             localIGT = 0;
             quitoutLatch = true;
-            creditsLatch = false;
-            ngChanged = false;
             creditsRolling = false;
 
             if (Ready)
@@ -134,6 +130,7 @@ namespace LiveSplit.DarkSoulsIGT
             {
                 int _tmpIGT = DarkSouls.MemoryIGT;
                 int _tmpNgCount = DarkSouls.NgCount;
+                int _tmpCurrentSaveSlot = DarkSouls.CurrentSaveSlot;
                 bool _isLoaded = DarkSouls.Loaded;
 
                 // If IGT is running
@@ -155,11 +152,17 @@ namespace LiveSplit.DarkSoulsIGT
                         // if the player isn't loaded, then credits are playing (video cutscene is playing)
                         if (!_isLoaded && !creditsRolling)
                         {                          
-                            int fileIGT = DarkSouls.GetCurrentSlotIGT(DarkSouls.CurrentSaveSlot);
+                            int fileIGT = DarkSouls.GetCurrentSlotIGT(_tmpCurrentSaveSlot);
                             if (fileIGT != -1)
                             {
                                 creditsRolling = true;
                                 localIGT = fileIGT;
+                                return localIGT;
+                            } else
+                            {
+                                // reading the file failed for some reason, use
+                                // memory IGT. Also don't setup the latch
+                                localIGT = _tmpIGT;
                                 return localIGT;
                             }
                         }
@@ -169,13 +172,14 @@ namespace LiveSplit.DarkSoulsIGT
                         if (_isLoaded && creditsRolling)
                         {
                             creditsRolling = false;
-                            previousNgCount = _tmpNgCount;
+                            previousNgCount = _tmpNgCount; // only update previousNgCount onces credits are over
                             localIGT = _tmpIGT;
                             return localIGT;
                         }
                     } else
                     {
                         // game running normally
+                        previousNgCount = _tmpNgCount;
                         return _tmpIGT;
                     }
                 }
@@ -186,11 +190,17 @@ namespace LiveSplit.DarkSoulsIGT
                     // fix the IGT only once per quitout
                     if (!quitoutLatch)
                     {
-                        int fileIGT = DarkSouls.GetCurrentSlotIGT(DarkSouls.CurrentSaveSlot);
+                        int fileIGT = DarkSouls.GetCurrentSlotIGT(_tmpCurrentSaveSlot);
                         if (fileIGT != -1)
                         {
                             quitoutLatch = true;
                             localIGT = fileIGT;
+                            return localIGT;
+                        } else
+                        {
+                            // reading the file failed for some reason, use
+                            // the old rollback method. Also don't setup the latch
+                            localIGT -= DarkSouls.QuitoutRollback;
                             return localIGT;
                         }
                     }
@@ -198,7 +208,7 @@ namespace LiveSplit.DarkSoulsIGT
             }
 
             // If not ready, return whatever IGT we had on previous update
-            // Game may be closed
+            // Game could be closed because of crash or Force Quit
             return localIGT;
         }
 
@@ -213,17 +223,20 @@ namespace LiveSplit.DarkSoulsIGT
             {
                 case GameVersion.Remastered:
                     DarkSouls = new Remastered(this);
-                    previousNgCount = DarkSouls.NgCount;
-                    ngChanged = false;
                     break;
                 case GameVersion.PrepareToDie:
                     DarkSouls = new PrepareToDie(this);
-                    previousNgCount = DarkSouls.NgCount;
-                    ngChanged = false;
                     break;
                 default:
                     DarkSouls = null;
                     break;
+            }
+
+            if (Ready)
+            {
+                previousNgCount = DarkSouls.NgCount;
+                quitoutLatch = true;
+                creditsRolling = false;
             }
         }
 
@@ -236,7 +249,6 @@ namespace LiveSplit.DarkSoulsIGT
         {
             DarkSouls = null;
             creditsRolling = false;
-            ngChanged = false;
             quitoutLatch = true;
         }
     }
