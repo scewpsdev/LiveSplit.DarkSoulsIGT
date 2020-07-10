@@ -17,8 +17,8 @@ namespace LiveSplit.DarkSoulsIGT
         /// </summary>
         private const string PTDE_NAME = "DARKSOULS";
         private const string REMASTERED_NAME = "DARK SOULS™: REMASTERED";
-        private const int UNHOOKED_INTERVAL = 1000;
-        private const int HOOKED_INTERVAL = 16;
+        private const int UNHOOKED_INTERVAL = 5000;
+        private const int HOOKED_INTERVAL = 33;
         private const int MIN_LIFE_SPAN = 5000;
 
         /// <summary>
