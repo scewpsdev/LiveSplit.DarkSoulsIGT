@@ -4,7 +4,7 @@
 			<file path="Components/LiveSplit.DarkSoulsIGT.dll" status="changed" />
 		</files>
 		<changelog>
-			<change>Fixed performances.</change>
+			<change>Fixed performance.</change>
 		</changelog>
 	</update>
 	<update version="4.1.0.0">
@@ -14,7 +14,7 @@
 		<changelog>
 			<change>Fixed Inventory Index Reset for DSR.</change>
 			<change>Fixed IGT on force quit and crashes.</change>
-			<change>Fixed performances.</change>
+			<change>Fixed performance.</change>
 		</changelog>
 	</update>
 	<update version="4.0.0.0">
