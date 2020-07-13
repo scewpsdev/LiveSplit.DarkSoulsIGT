@@ -1,4 +1,12 @@
 ﻿<updates>
+	<update version="4.2.0.0">
+		<files>
+			<file path="Components/LiveSplit.DarkSoulsIGT.dll" status="changed" />
+		</files>
+		<changelog>
+			<change>Fixed performances.</change>
+		</changelog>
+	</update>
 	<update version="4.1.0.0">
 		<files>
 			<file path="Components/LiveSplit.DarkSoulsIGT.dll" status="changed" />

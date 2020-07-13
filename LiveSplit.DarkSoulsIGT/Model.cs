@@ -18,8 +18,7 @@ namespace LiveSplit.DarkSoulsIGT
         /// </summary>
         private const string PTDE_NAME = "DARKSOULS";
         private const string REMASTERED_NAME = "DARK SOULS™: REMASTERED";
-        private const int UNHOOKED_INTERVAL = 5000;
-        private const int HOOKED_INTERVAL = 33;
+        private const int REFRESH_INTERVAL = 5000;
         private const int MIN_LIFE_SPAN = 5000;
 
         /// <summary>
@@ -48,17 +47,6 @@ namespace LiveSplit.DarkSoulsIGT
         private DarkSouls DarkSouls { get; set; }
 
         /// <summary>
-        /// Dynanux RefreshInterval
-        /// </summary>
-        new public int RefreshInterval
-        {
-            get
-            {
-                return (Hooked) ? HOOKED_INTERVAL : UNHOOKED_INTERVAL;
-            }
-        }
-
-        /// <summary>
         /// If the model is ready to be used or not
         /// </summary>
         public bool Ready
@@ -80,7 +68,7 @@ namespace LiveSplit.DarkSoulsIGT
         /// <summary>
         /// Constructor
         /// </summary>
-        public Model() : base(0, MIN_LIFE_SPAN, processSelector) // RefreshInterval at 0 because manually refreshed from the outside
+        public Model() : base(REFRESH_INTERVAL, MIN_LIFE_SPAN, processSelector)
         {
             OnHooked += DarkSoulsProcess_OnHooked;
             OnUnhooked += DarkSoulsProcess_OnUnhooked;

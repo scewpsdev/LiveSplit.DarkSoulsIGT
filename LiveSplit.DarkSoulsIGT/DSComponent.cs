@@ -22,8 +22,6 @@ namespace LiveSplit.DarkSoulsIGT
             this.state = state;
             this.state.OnStart += State_OnStart;
             this.state.OnReset += State_OnReset;
-
-            model.Start();
         }
 
         private void State_OnStart(object sender, EventArgs e)
@@ -59,6 +57,15 @@ namespace LiveSplit.DarkSoulsIGT
 
         public override void Update(IInvalidator invalidator, LiveSplitState state, float width, float height, LayoutMode mode)
         {
+            if (!model.Hooked)
+            {
+                model.Start();
+            }
+            else
+            {
+                model.Stop();
+            }
+
             if (this.state.CurrentPhase == TimerPhase.Running)
             {
                 this.state.SetGameTime(new TimeSpan(0, 0, 0, 0, model.GetInGameTime()));
