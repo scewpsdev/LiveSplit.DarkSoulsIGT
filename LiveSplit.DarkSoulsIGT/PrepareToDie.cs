@@ -91,43 +91,22 @@ namespace LiveSplit.DarkSoulsIGT
         }
 
         /// <summary>
-        /// Returns the IGT of a specific slot in the game's savefile
+        /// Returns the savefile's location
         /// </summary>
-        /// <param name="slot">The slot ID to access, from 0 to 10</param>
-        /// <returns>Returns the IGT of the selected slot. Returns -1 if an error happened</returns>
-        public override int GetCurrentSlotIGT(int slot = 0)
+        /// <returns></returns>
+        public override string GetSaveFileLocation()
         {
-            int igt;
+            var MyDocuments = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
+            var path = Path.Combine(MyDocuments, "NBGI\\DarkSouls");
+            var variable = pSL2.ReadInt32(0x10);
 
-            try
+            if (variable != 0)
             {
-                var MyDocuments = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
-                var path = Path.Combine(MyDocuments, "NBGI\\DarkSouls");
-                var variable = pSL2.ReadInt32(0x10);
-
-                if (variable != 0)
-                {
-                    string gfwl_id = ReadUnicode(Process.CreateChildPointer(pSL2, 0x0));
-                    path = Path.Combine(path, gfwl_id);
-                }
-
-                path = Path.Combine(path, "DRAKS0005.sl2");
-
-                byte[] file = File.ReadAllBytes(path);
-                int saveSlotSize = 0x60020;
-
-                // Seems like GFWL files have a different slot size
-                if (file.Length != 4326432)
-                    saveSlotSize = 0x60190;
-
-                int igtOffset = 0x2dc + saveSlotSize * CurrentSaveSlot;
-                igt = BitConverter.ToInt32(file, igtOffset);
-            } catch
-            {
-                igt = -1;
+                string gfwl_id = ReadUnicode(Process.CreateChildPointer(pSL2, 0x0));
+                path = Path.Combine(path, gfwl_id);
             }
 
-            return igt;
+            return Path.Combine(path, "DRAKS0005.sl2");
         }
     }
 }

@@ -67,6 +67,7 @@
     <Compile Include="PrepareToDie.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Remastered.cs" />
+    <Compile Include="SL2Reader.cs" />
     <Compile Include="UI\DSSettings.cs">
       <SubType>UserControl</SubType>
     </Compile>

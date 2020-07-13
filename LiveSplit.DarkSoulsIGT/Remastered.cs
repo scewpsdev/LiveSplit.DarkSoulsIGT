@@ -4,6 +4,8 @@ using System.IO;
 using System.Security.Cryptography;
 using System.Diagnostics;
 using System.Linq;
+using System.Collections.Generic;
+using System.Runtime.InteropServices;
 
 namespace LiveSplit.DarkSoulsIGT
 {
@@ -28,7 +30,7 @@ namespace LiveSplit.DarkSoulsIGT
             // Set pointers
             pCharClassBase = Process.RegisterRelativeAOB(CHR_CLASS_BASE_AOB, 3, 7, 0);
             pLoaded = Process.RegisterRelativeAOB(CHR_FOLLOW_CAM_AOB, 3, 7, 0, 0x60, 0x60);
-            pInventoryReset = Process.RegisterRelativeAOB(INVENTORY_RESET_AOB, 14, 0);
+            pInventoryReset = Process.RegisterRelativeAOB(INVENTORY_RESET_AOB, 14, 0x12);
             pCurrentSlot = Process.RegisterRelativeAOB(CHR_CLASS_WARP_AOB, 3, 0, 7);
 
             Process.RescanAOB();
@@ -92,14 +94,13 @@ namespace LiveSplit.DarkSoulsIGT
         }
 
         /// <summary>
-        /// Returns the IGT of a specific slot in the game's savefile
+        /// Returns the savefile's location
         /// </summary>
-        /// <param name="slot">The slot ID to access, from 0 to 10</param>
-        /// <returns>Returns the IGT of the selected slot. Returns -1 if an error happened</returns>
-        public override int GetCurrentSlotIGT(int slot = 0)
+        /// <returns></returns>
+        public override string GetSaveFileLocation()
         {
-            int igt;
-
+            // @TODO find a pointer to the player's region since only Japan gets
+            // a different savefile folder
             var MyDocuments = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
             var japan = Path.Combine(MyDocuments, "FromSoftware\\DARK SOULS REMASTERED");
             var path = Path.Combine(MyDocuments, "NBGI\\DARK SOULS REMASTERED");
@@ -109,61 +110,7 @@ namespace LiveSplit.DarkSoulsIGT
                 path = japan;
             }
 
-            path = Path.Combine(path, $"{SteamID3}\\DRAKS0005.sl2");
-
-            try
-            {
-                // Each USERDATA file is individually AES - 128 - CBC encrypted.
-                byte[] file = File.ReadAllBytes(path);
-                file = DecryptSL2(file);
-                int saveSlotSize = 0x60030;
-                int igtOffset = 0x2EC + saveSlotSize * CurrentSaveSlot;
-                igt = BitConverter.ToInt32(file, igtOffset);
-            }
-            catch
-            {
-                igt = -1;
-            }
-
-            return igt;
-        }
-
-        /// <summary>
-        /// Decrypts SL2 file for DSR cause this meme is using AES
-        /// </summary>
-        /// <param name="cipherBytes"></param>
-        /// <param name="key"></param>
-        /// <param name="iv"></param>
-        /// <returns></returns>
-        private byte[] DecryptSL2(byte[] cipherBytes)
-        {
-            Aes encryptor = Aes.Create();
-            encryptor.Mode = CipherMode.CBC;
-
-            // Set key and IV
-            byte[] aesKey = new byte[16];
-            Array.Copy(AES_KEY, 0, aesKey, 0, 16);
-            encryptor.Key = aesKey;
-            encryptor.IV = cipherBytes.Take(16).ToArray();
-
-            MemoryStream memoryStream = new MemoryStream();
-            ICryptoTransform aesDecryptor = encryptor.CreateDecryptor();
-            CryptoStream cryptoStream = new CryptoStream(memoryStream, aesDecryptor, CryptoStreamMode.Write);
-            byte[] plainBytes;
-
-            try
-            {
-                cryptoStream.Write(cipherBytes, 0, cipherBytes.Length);
-                cryptoStream.FlushFinalBlock();
-                plainBytes = memoryStream.ToArray();
-            }
-            finally
-            {
-                memoryStream.Close();
-                cryptoStream.Close();
-            }
-
-            return plainBytes;
+            return Path.Combine(path, $"{SteamID3}\\DRAKS0005.sl2");
         }
     }
 }

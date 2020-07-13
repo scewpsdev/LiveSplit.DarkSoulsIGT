@@ -8,7 +8,7 @@ namespace LiveSplit.DarkSoulsIGT
         /// <summary>
         /// Local private variables
         /// </summary>
-        private int[] InventoryOffsets = new int[]
+        private readonly int[] inventoryOffsets = new int[]
         {
             0,          // slot 7
             0x4,        // slot 0
@@ -75,23 +75,22 @@ namespace LiveSplit.DarkSoulsIGT
             this.Process = process;
         }
 
-        /// <summary>
+        /// <summary>0
         /// Reset the inventory indexes
         /// </summary>
         public void ResetInventory()
         {
-            foreach (int offset in InventoryOffsets)
+            foreach (int offset in inventoryOffsets)
             {
                 pInventoryReset.WriteUInt32(offset, UInt32.MaxValue);
             }
         }
 
         /// <summary>
-        /// Returns the IGT of a specific slot in the game's savefile
+        /// Returns the game savefile path
         /// </summary>
-        /// <param name="slot"></param>
         /// <returns></returns>
-        public abstract int GetCurrentSlotIGT(int slot = 0);
+        public abstract string GetSaveFileLocation();
 
         /// <summary>
         /// Rollback value, used as a fallback

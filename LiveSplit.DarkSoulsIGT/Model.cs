@@ -8,6 +8,7 @@ namespace LiveSplit.DarkSoulsIGT
     {
         PrepareToDie,
         Remastered,
+        None,
     }
 
     class Model : PHook
@@ -26,8 +27,11 @@ namespace LiveSplit.DarkSoulsIGT
         /// </summary>
         private int localIGT;
         private bool quitoutLatch;
-        private int previousNgCount;
+        private bool unhookedLatch;
         private bool creditsRolling;
+        private int previousCurrentSaveSlot;
+        private int previousNgCount;
+        private string savefilePath;
 
         /// <summary>
         /// Process Selector
@@ -101,11 +105,8 @@ namespace LiveSplit.DarkSoulsIGT
             localIGT = 0;
             quitoutLatch = true;
             creditsRolling = false;
-
-            if (Ready)
-            {
-                previousNgCount = DarkSouls.NgCount;
-            }
+            unhookedLatch = false;
+            previousNgCount = int.MaxValue;
         }
 
         /// <summary>
@@ -128,87 +129,118 @@ namespace LiveSplit.DarkSoulsIGT
         {
             if (Ready)
             {
-                int _tmpIGT = DarkSouls.MemoryIGT;
-                int _tmpNgCount = DarkSouls.NgCount;
-                int _tmpCurrentSaveSlot = DarkSouls.CurrentSaveSlot;
-                bool _isLoaded = DarkSouls.Loaded;
+                unhookedLatch = false;
+                int IGT = -1;
 
-                // If IGT is running
-                if (_tmpIGT > 0)
+                try
                 {
-                    // then we're not on a quitout
-                    quitoutLatch = false;
+                    // Read the Dark Souls process once at the start to
+                    // avoid the value
+                    int _tmpIGT = DarkSouls.MemoryIGT;
+                    int _tmpNgCount = DarkSouls.NgCount;
+                    int _tmpCurrentSaveSlot = DarkSouls.CurrentSaveSlot;
+                    bool _isLoaded = DarkSouls.Loaded;
+                    string _tmpSavefilePath = DarkSouls.GetSaveFileLocation();
 
-                    // Check if NG increased since last update (in-game cutscene is playing)
-                    if (_tmpNgCount > previousNgCount)
+                    // If IGT is running
+                    if (_tmpIGT > 0)
                     {
-                        // Final in-game cutscene is playing, just keep using memory IGT
-                        if (_isLoaded && !creditsRolling)
-                        {
-                            localIGT = _tmpIGT;
-                            return localIGT;
-                        }
+                        // then we're not on a quitout
+                        quitoutLatch = false;
 
-                        // if the player isn't loaded, then credits are playing (video cutscene is playing)
-                        if (!_isLoaded && !creditsRolling)
-                        {                          
-                            int fileIGT = DarkSouls.GetCurrentSlotIGT(_tmpCurrentSaveSlot);
-                            if (fileIGT != -1)
+                        // Check if NG increased since last update (in-game cutscene is playing)
+                        if (_tmpNgCount > previousNgCount)
+                        {
+                            // Final in-game cutscene is playing, just keep using memory IGT
+                            if (_isLoaded && !creditsRolling)
                             {
-                                creditsRolling = true;
-                                localIGT = fileIGT;
-                                return localIGT;
-                            } else
+                                IGT = _tmpIGT;
+                            }
+
+                            // if the player isn't loaded, then credits are playing (video cutscene is playing)
+                            if (!_isLoaded && !creditsRolling)
                             {
-                                // reading the file failed for some reason, use
-                                // memory IGT. Also don't setup the latch
-                                localIGT = _tmpIGT;
-                                return localIGT;
+                                int fileIGT = SL2Reader.GetCurrentSlotIGT(_tmpSavefilePath, previousCurrentSaveSlot);
+                                if (fileIGT != -1)
+                                {
+                                    creditsRolling = true;
+                                    savefilePath = _tmpSavefilePath;
+                                    IGT = fileIGT;
+                                }
+                                else
+                                {
+                                    // reading the file failed for some reason, use
+                                    // memory IGT. Also don't setup the latch
+                                    IGT = _tmpIGT;
+                                }
+                            }
+
+                            // if we aren't loaded but creditsRolling is true
+                            // then it means credits are over. 
+                            if (_isLoaded && creditsRolling)
+                            {
+                                creditsRolling = false;
+                                previousNgCount = _tmpNgCount; // only update previousNgCount onces credits are over
+                                IGT = _tmpIGT;
                             }
                         }
-
-                        // if we aren't loaded but creditsRolling is true
-                        // then it means credits are over. 
-                        if (_isLoaded && creditsRolling)
+                        else
                         {
-                            creditsRolling = false;
-                            previousNgCount = _tmpNgCount; // only update previousNgCount onces credits are over
-                            localIGT = _tmpIGT;
-                            return localIGT;
+                            // game running normally
+                            // update previous variables for next update
+                            previousNgCount = _tmpNgCount;
+                            previousCurrentSaveSlot = _tmpCurrentSaveSlot;
+                            IGT = _tmpIGT;
                         }
-                    } else
+                    }
+
+                    // IGT is always at 0 during quitouts
+                    if (_tmpIGT == 0)
                     {
-                        // game running normally
-                        previousNgCount = _tmpNgCount;
-                        return _tmpIGT;
+                        // fix the IGT only once per quitout
+                        if (!quitoutLatch)
+                        {
+                            int fileIGT = SL2Reader.GetCurrentSlotIGT(_tmpSavefilePath, previousCurrentSaveSlot);
+                            if (fileIGT != -1)
+                            {
+                                quitoutLatch = true;
+                                savefilePath = _tmpSavefilePath;
+                                IGT = fileIGT;
+                            }
+                            else
+                            {
+                                // reading the file failed for some reason, use
+                                // the old rollback method. Also don't setup the latch
+                                IGT -= DarkSouls.QuitoutRollback;
+                            }
+                        }
                     }
                 }
-
-                // IGT is always at 0 during quitouts
-                if (_tmpIGT == 0)
+                catch
                 {
-                    // fix the IGT only once per quitout
-                    if (!quitoutLatch)
+                    IGT = -1;
+                }
+
+                // computation of IGT worked
+                // and game is still ready
+                if (IGT != -1 && Ready)
+                {
+                    localIGT = IGT;
+                }
+            } else
+            {
+                // If game is closed (FQ or crash) and timer was running, return IGT from savefile
+                if (localIGT > 0 && !unhookedLatch)
+                {
+                    int fileIGT = SL2Reader.GetCurrentSlotIGT(savefilePath, previousCurrentSaveSlot);
+                    if (fileIGT != -1)
                     {
-                        int fileIGT = DarkSouls.GetCurrentSlotIGT(_tmpCurrentSaveSlot);
-                        if (fileIGT != -1)
-                        {
-                            quitoutLatch = true;
-                            localIGT = fileIGT;
-                            return localIGT;
-                        } else
-                        {
-                            // reading the file failed for some reason, use
-                            // the old rollback method. Also don't setup the latch
-                            localIGT -= DarkSouls.QuitoutRollback;
-                            return localIGT;
-                        }
+                        unhookedLatch = true;
+                        localIGT = fileIGT;
                     }
                 }
             }
 
-            // If not ready, return whatever IGT we had on previous update
-            // Game could be closed because of crash or Force Quit
             return localIGT;
         }
 
