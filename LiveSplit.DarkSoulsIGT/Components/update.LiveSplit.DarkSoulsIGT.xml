@@ -4,6 +4,14 @@
 			<file path="Components/LiveSplit.DarkSoulsIGT.dll" status="changed" />
 		</files>
 		<changelog>
+			<change>Fixed Inventory Index Reset for DSR.</change>
+		</changelog>
+	</update>
+	<update version="4.2.0.0">
+		<files>
+			<file path="Components/LiveSplit.DarkSoulsIGT.dll" status="changed" />
+		</files>
+		<changelog>
 			<change>Fixed performance.</change>
 		</changelog>
 	</update>

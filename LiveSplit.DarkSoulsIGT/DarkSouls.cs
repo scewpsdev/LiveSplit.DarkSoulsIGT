@@ -8,28 +8,7 @@ namespace LiveSplit.DarkSoulsIGT
         /// <summary>
         /// Local private variables
         /// </summary>
-        private readonly int[] inventoryOffsets = new int[]
-        {
-            0,          // slot 7
-            0x4,        // slot 0
-            0x8,        // slot 8
-            0xC,        // slot 1
-            0x3C,       // slot 2
-            0x3C+0x4,   // slot 3
-            0x3C+0x8,   // slot 4
-            0x3C+0xC,   // slot 5
-            0x3C+0x10,  // slot 6
-            0x20,       // slot 14
-            0x20+0x4,   // slot 15
-            0x20+0x8,   // slot 16
-            0x20+0xC,   // slot 17
-            0x34,       // slot 18
-            0x34+0x4,   // slot 19
-            0x10,       // slot 9
-            0x10+0x8,   // slot 10
-            0x14,       // slot 11
-            0x14+0x8,   // slot 12
-        };
+        private int EQUIPMENT_SLOT_COUNT = 20;
 
         /// <summary>
         /// The Game. Either Dark Souls or Remastered
@@ -80,9 +59,9 @@ namespace LiveSplit.DarkSoulsIGT
         /// </summary>
         public void ResetInventory()
         {
-            foreach (int offset in inventoryOffsets)
+            for (int i = 0; i < EQUIPMENT_SLOT_COUNT; i++)
             {
-                pInventoryReset.WriteUInt32(offset, UInt32.MaxValue);
+                pInventoryReset.WriteUInt32(0x4 * i, UInt32.MaxValue);
             }
         }
 
