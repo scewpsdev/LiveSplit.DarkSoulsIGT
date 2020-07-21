@@ -1,5 +1,13 @@
 ﻿<updates>
-	<update version="4.2.0.0">
+	<update version="4.4.0.0">
+		<files>
+			<file path="Components/LiveSplit.DarkSoulsIGT.dll" status="changed" />
+		</files>
+		<changelog>
+			<change>Disabled savefile reading when savefile is read only.</change>
+		</changelog>
+	</update>
+	<update version="4.3.0.0">
 		<files>
 			<file path="Components/LiveSplit.DarkSoulsIGT.dll" status="changed" />
 		</files>

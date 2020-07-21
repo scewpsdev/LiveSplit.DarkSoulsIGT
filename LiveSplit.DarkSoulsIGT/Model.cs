@@ -188,10 +188,11 @@ namespace LiveSplit.DarkSoulsIGT
                         // fix the IGT only once per quitout
                         if (!quitoutLatch)
                         {
+                            quitoutLatch = true;
+
                             int fileIGT = SL2Reader.GetCurrentSlotIGT(_tmpSavefilePath, previousCurrentSaveSlot);
                             if (fileIGT != -1)
                             {
-                                quitoutLatch = true;
                                 savefilePath = _tmpSavefilePath;
                                 IGT = fileIGT;
                             }
@@ -199,7 +200,7 @@ namespace LiveSplit.DarkSoulsIGT
                             {
                                 // reading the file failed for some reason, use
                                 // the old rollback method. Also don't setup the latch
-                                IGT -= DarkSouls.QuitoutRollback;
+                                localIGT -= DarkSouls.QuitoutRollback;
                             }
                         }
                     }
@@ -220,10 +221,11 @@ namespace LiveSplit.DarkSoulsIGT
                 // If game is closed (FQ or crash) and timer was running, return IGT from savefile
                 if (localIGT > 0 && !unhookedLatch)
                 {
+                    unhookedLatch = true;
+
                     int fileIGT = SL2Reader.GetCurrentSlotIGT(savefilePath, previousCurrentSaveSlot);
                     if (fileIGT != -1)
                     {
-                        unhookedLatch = true;
                         localIGT = fileIGT;
                     }
                 }

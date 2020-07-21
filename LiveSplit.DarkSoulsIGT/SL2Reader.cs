@@ -27,33 +27,57 @@ namespace LiveSplit.DarkSoulsIGT
         /// <returns>IGT or -1 if sometimes failed</returns>
         public static int GetCurrentSlotIGT(string path, int slot)
         {
-            int igt;
+            int igt = -1;
 
-            if (path.Contains("DarkSouls"))
+            try
             {
-                byte[] file = File.ReadAllBytes(path);
-                int saveSlotSize = 0x60020;
+                if (isReadable(path))
+                {
+                    if (path.Contains("DarkSouls"))
+                    {
+                        byte[] file = File.ReadAllBytes(path);
+                        int saveSlotSize = 0x60020;
 
-                // Seems like GFWL files have a different slot size
-                if (file.Length != 4326432)
-                    saveSlotSize = 0x60190;
+                        // Seems like GFWL files have a different slot size
+                        if (file.Length != 4326432)
+                            saveSlotSize = 0x60190;
 
-                int igtOffset = 0x2dc + (saveSlotSize * slot);
-                igt = BitConverter.ToInt32(file, igtOffset);
-            } else if (path.Contains("DARK SOULS REMASTERED"))
-            {
-                // Each USERDATA file is individually AES - 128 - CBC encrypted.
-                byte[] file = File.ReadAllBytes(path);
-                file = DecryptSL2(file);
-                int saveSlotSize = 0x60030;
-                int igtOffset = 0x2EC + (saveSlotSize * slot);
-                igt = BitConverter.ToInt32(file, igtOffset);
-            } else
+                        int igtOffset = 0x2dc + (saveSlotSize * slot);
+                        igt = BitConverter.ToInt32(file, igtOffset);
+                    }
+                    else if (path.Contains("DARK SOULS REMASTERED"))
+                    {
+                        // Each USERDATA file is individually AES - 128 - CBC encrypted.
+                        byte[] file = File.ReadAllBytes(path);
+                        file = DecryptSL2(file);
+                        int saveSlotSize = 0x60030;
+                        int igtOffset = 0x2EC + (saveSlotSize * slot);
+                        igt = BitConverter.ToInt32(file, igtOffset);
+                    }
+                }
+            } catch
             {
                 igt = -1;
             }
 
+
             return igt;
+        }
+
+        /// <summary>
+        /// Tests if the path to an SL2 file should be read or not
+        /// </summary>
+        /// <param name=""></param>
+        /// <returns></returns>
+        private static bool isReadable(string path)
+        {
+            try
+            {
+                return File.Exists(path) && !(new FileInfo(path).IsReadOnly);
+            } catch
+            {
+                return false;
+            }
         }
 
         /// <summary>
