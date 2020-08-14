@@ -26,9 +26,8 @@ namespace LiveSplit.DarkSoulsIGT
             model.Start();
         }
 
-        private void State_OnStart(object sender, EventArgs e)
+        private void Reset()
         {
-            state.IsGameTimePaused = true;
             model.Reset();
 
             if (settings.InventoryResetEnabled)
@@ -37,9 +36,15 @@ namespace LiveSplit.DarkSoulsIGT
             }
         }
 
+        private void State_OnStart(object sender, EventArgs e)
+        {
+            state.IsGameTimePaused = true;
+            Reset();
+        }
+
         private void State_OnReset(object sender, TimerPhase value)
         {
-            model.Reset();
+            Reset();
         }
 
         public override XmlNode GetSettings(XmlDocument document)

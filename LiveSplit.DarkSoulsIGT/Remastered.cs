@@ -33,6 +33,11 @@ namespace LiveSplit.DarkSoulsIGT
             pCurrentSlot = Process.RegisterRelativeAOB(CHR_CLASS_WARP_AOB, 3, 0, 7);
 
             Process.RescanAOB();
+
+            if (!Process.AOBScanSucceeded)
+            {
+                throw new Exception("At least one AOB scan failed.");
+            }
         }
 
         /// <summary>

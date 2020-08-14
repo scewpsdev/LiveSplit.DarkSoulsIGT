@@ -35,6 +35,11 @@ namespace LiveSplit.DarkSoulsIGT
             pSL2 = Process.RegisterAbsoluteAOB(SL2_INFORMATION_AOB, 7);
 
             Process.RescanAOB();
+
+            if (!Process.AOBScanSucceeded)
+            {
+                throw new Exception("At least one AOB scan failed.");
+            }
         }
 
         /// <summary>

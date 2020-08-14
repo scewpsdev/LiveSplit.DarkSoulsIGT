@@ -1,4 +1,12 @@
 ﻿<updates>
+  <update version="4.4.0.1">
+    <files>
+      <file path="Components/LiveSplit.DarkSoulsIGT.dll" status="changed" />
+    </files>
+    <changelog>
+      <change>Inventory Index Reset now resets both onStart and onReset.</change>
+    </changelog>
+  </update>
 	<update version="4.4.0.0">
 		<files>
 			<file path="Components/LiveSplit.DarkSoulsIGT.dll" status="changed" />

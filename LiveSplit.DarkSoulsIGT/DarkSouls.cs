@@ -61,7 +61,10 @@ namespace LiveSplit.DarkSoulsIGT
         {
             for (int i = 0; i < EQUIPMENT_SLOT_COUNT; i++)
             {
-                pInventoryReset.WriteUInt32(0x4 * i, UInt32.MaxValue);
+                if (!pInventoryReset.WriteUInt32(0x4 * i, UInt32.MaxValue))
+                {
+                    throw new Exception($"Inventory index reset failed. (used as a base address 0x{pInventoryReset.Resolve().ToString("X8")})");
+                }
             }
         }
 
