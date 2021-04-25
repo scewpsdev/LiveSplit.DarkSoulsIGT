@@ -8,53 +8,55 @@ namespace LiveSplit.DarkSoulsIGT
 {
     public class DSComponent : LogicComponent
     {
-        private Model model;
-        private LiveSplitState state;
-        private DSSettings settings;
+        private readonly int IGT_START_THRESHOLD = 100; // ms
+
+        private readonly TimerModel timerModel;
+        private readonly Model model;
+        private readonly LiveSplitState state;
+        private readonly DSSettings settings;
+        private bool resetIndexesLatch;
 
         public override string ComponentName => "Dark Souls & Dark Souls: Remastered In-Game Timer";
 
         public DSComponent(LiveSplitState state)
         {
-            model = new Model();
-            settings = new DSSettings();
+            this.model = new Model();
+            this.settings = new DSSettings();
 
             this.state = state;
             this.state.OnStart += State_OnStart;
             this.state.OnReset += State_OnReset;
+            this.resetIndexesLatch = false;
 
-            model.Start();
-        }
-
-        private void Reset()
-        {
-            model.Reset();
-
-            if (settings.InventoryResetEnabled)
+            this.timerModel = new TimerModel
             {
-                model.ResetIndexes();
-            }
+                CurrentState = this.state
+            };
+
+            this.model.Start();
         }
+
 
         private void State_OnStart(object sender, EventArgs e)
         {
-            state.IsGameTimePaused = true;
-            Reset();
+            this.state.IsGameTimePaused = this.settings.UseGameTime;
+            this.model.Reset();
         }
 
         private void State_OnReset(object sender, TimerPhase value)
         {
-            Reset();
+            this.resetIndexesLatch = false;
+            this.model.Reset();
         }
 
         public override XmlNode GetSettings(XmlDocument document)
         {
-            return settings.GetSettings(document);
+            return this.settings.GetSettings(document);
         }
 
         public override System.Windows.Forms.Control GetSettingsControl(LayoutMode mode)
         {
-            return settings;
+            return this.settings;
         }
 
         public override void SetSettings(XmlNode settings)
@@ -64,16 +66,33 @@ namespace LiveSplit.DarkSoulsIGT
 
         public override void Update(IInvalidator invalidator, LiveSplitState state, float width, float height, LayoutMode mode)
         {
-            if (this.state.CurrentPhase == TimerPhase.Running)
+            int memoryIGT = this.model.GetMemoryInGameTime();
+            this.state.IsGameTimePaused = this.settings.UseGameTime;
+
+            if (this.settings.UseGameTime && this.state.CurrentPhase == TimerPhase.Running)
             {
-                this.state.SetGameTime(new TimeSpan(0, 0, 0, 0, model.GetInGameTime()));
+                this.state.SetGameTime(new TimeSpan(0, 0, 0, 0, this.model.GetInGameTime()));
+            }
+
+            if (memoryIGT > 0 && memoryIGT < IGT_START_THRESHOLD)
+            {
+                if (this.settings.StartTimerAutomatically && this.state.CurrentPhase == TimerPhase.NotRunning)
+                {
+                    this.timerModel.Start();
+                }
+
+                if (this.settings.InventoryResetEnabled && !this.resetIndexesLatch)
+                {
+                    this.model.ResetIndexes();
+                    this.resetIndexesLatch = true;
+                }
             }
         }
 
         public override void Dispose()
         {
-            model.Stop();
-            model.Dispose();
+            this.model.Stop();
+            this.model.Dispose();
         }
     }
 }

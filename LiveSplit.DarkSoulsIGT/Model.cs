@@ -108,6 +108,12 @@ namespace LiveSplit.DarkSoulsIGT
             }
         }
 
+        public int GetMemoryInGameTime()
+        {
+
+            return (Ready) ? DarkSouls.MemoryIGT : 0;
+        }
+
         /// <summary>
         /// Returns the IGT
         /// Reads the savefile's IGT on quitouts and credits
