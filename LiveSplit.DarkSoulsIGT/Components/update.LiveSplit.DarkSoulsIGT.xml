@@ -1,4 +1,14 @@
 ﻿<updates>
+  <update version="4.5.0.0">
+    <files>
+      <file path="Components/LiveSplit.DarkSoulsIGT.dll" status="changed" />
+    </files>
+    <changelog>
+      <change>Inventory Index Reset now resets only at the start of a new character.</change>
+      <change>Added an option to disable game time.</change>
+      <change>Added an option to start the timer automatically.</change>
+    </changelog>
+  </update>
   <update version="4.4.0.1">
     <files>
       <file path="Components/LiveSplit.DarkSoulsIGT.dll" status="changed" />
