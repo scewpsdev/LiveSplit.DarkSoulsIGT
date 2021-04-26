@@ -1,0 +1,98 @@
+﻿<updates>
+  <update version="4.5.0.0">
+    <files>
+      <file path="Components/LiveSplit.DarkSoulsIGT.dll" status="changed" />
+    </files>
+    <changelog>
+      <change>Inventory Index Reset now resets only at the start of a new character.</change>
+      <change>Added an option to disable game time.</change>
+      <change>Added an option to start the timer automatically.</change>
+    </changelog>
+  </update>
+  <update version="4.4.0.1">
+    <files>
+      <file path="Components/LiveSplit.DarkSoulsIGT.dll" status="changed" />
+    </files>
+    <changelog>
+      <change>Inventory Index Reset now resets both onStart and onReset.</change>
+    </changelog>
+  </update>
+	<update version="4.4.0.0">
+		<files>
+			<file path="Components/LiveSplit.DarkSoulsIGT.dll" status="changed" />
+		</files>
+		<changelog>
+			<change>Disabled savefile reading when savefile is read only.</change>
+		</changelog>
+	</update>
+	<update version="4.3.0.0">
+		<files>
+			<file path="Components/LiveSplit.DarkSoulsIGT.dll" status="changed" />
+		</files>
+		<changelog>
+			<change>Fixed Inventory Index Reset for DSR.</change>
+		</changelog>
+	</update>
+	<update version="4.2.0.0">
+		<files>
+			<file path="Components/LiveSplit.DarkSoulsIGT.dll" status="changed" />
+		</files>
+		<changelog>
+			<change>Fixed performance.</change>
+		</changelog>
+	</update>
+	<update version="4.1.0.0">
+		<files>
+			<file path="Components/LiveSplit.DarkSoulsIGT.dll" status="changed" />
+		</files>
+		<changelog>
+			<change>Fixed Inventory Index Reset for DSR.</change>
+			<change>Fixed IGT on force quit and crashes.</change>
+			<change>Fixed performance.</change>
+		</changelog>
+	</update>
+	<update version="4.0.0.0">
+		<files>
+			<file path="Components/LiveSplit.DarkSoulsIGT.dll" status="changed" />
+		</files>
+		<changelog>
+			<change>Fixed final IGT on credits by reading IGT directly from the savefile.</change>
+			<change>Fixed IGT on quitouts by reading IGT directly from the savefile.</change>
+		</changelog>
+	</update>
+	<update version="3.1.0.0">
+		<files>
+			<file path="Components/LiveSplit.DarkSoulsIGT.dll" status="changed" />
+		</files>
+		<changelog>
+			<change>Various minor fixes.</change>
+		</changelog>
+	</update>
+	<update version="3.0.0.0">
+		<files>
+			<file path="Components/LiveSplit.DarkSoulsIGT.dll" status="changed" />
+		</files>
+		<changelog>
+			<change>Merged the Dark Souls and Dark Souls: Remastered plugins into a single plugin.</change>
+			<change>Fixed the timer sometimes not working anymore after the game was closed.</change>
+			<change>Fixed the timer flickers.</change>
+		</changelog>
+	</update>
+	<update version="2.0.0.0">
+		<files>
+			<file path="Components/LiveSplit.DarkSoulsIGT.dll" status="changed" />
+		</files>
+		<changelog>
+			<change>Added dynamic in-game time address scanning. This means the plugin shouldn't need update when a new game patch releases.</change>
+			<change>Added Inventory Indexes Reset. Resets equipment inventory indexes when you start/reset a run as those normally carry over to other/new characters.</change>
+		</changelog>
+	</update>
+	<update version="1.0.0.0">
+		<files>
+			<file path="Components/LiveSplit.DarkSoulsIGT.dll" status="changed" />
+		</files>
+		<changelog>
+			<change>Added LiveSplit self-update supprt.</change>
+		</changelog>
+	</update>
+</updates>
