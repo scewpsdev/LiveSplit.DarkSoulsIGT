@@ -79,7 +79,7 @@ namespace LiveSplit.DarkSoulsIGT {
             new BossFlag("Bed of Chaos", 10),
             new BossFlag("Iron Golem", 11),
             new BossFlag("Ornstein & Smough", 12),
-            new BossFlag("4 Kings", 13),
+            new BossFlag("Four Kings", 13),
             new BossFlag("Seath", 14),
             new BossFlag("Gwyn", 15),
             new BossFlag("Asylum Demon", 16),

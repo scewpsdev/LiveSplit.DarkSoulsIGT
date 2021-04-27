@@ -41,10 +41,14 @@ namespace LiveSplit.DarkSoulsIGT {
                 darksouls.OnInGameTimeChanged += DarkSouls_OnInGameTimeChanged;
                 darksouls.OnBossDied += Darksouls_OnBossDied;
                 darksouls.OnQuitout += Darksouls_OnQuitout;
+                OnDarkSoulsHooked?.Invoke(darksouls);
+                proc.Exited += Proc_Exited;
+            } 
+            else
+            {
+                // @TODO create DSR
             }
 
-            OnDarkSoulsHooked?.Invoke(darksouls);
-            proc.Exited += Proc_Exited;
         }
 
         private void DarkSouls_OnInGameTimeChanged(int old, int current)

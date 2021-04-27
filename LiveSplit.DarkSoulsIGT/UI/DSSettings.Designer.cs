@@ -33,11 +33,11 @@
             this.groupBox2 = new System.Windows.Forms.GroupBox();
             this.cbxStartTimer = new System.Windows.Forms.CheckBox();
             this.cbxUseIGT = new System.Windows.Forms.CheckBox();
-            this.groupBoxAutosplitter = new System.Windows.Forms.GroupBox();
-            this.cbxAutosplitterEnabled = new System.Windows.Forms.CheckBox();
+            this.groupboxAutosplitter = new System.Windows.Forms.GroupBox();
+            this.tblAutosplitter = new System.Windows.Forms.TableLayoutPanel();
             this.tableLayoutPanel1.SuspendLayout();
             this.groupBox2.SuspendLayout();
-            this.groupBoxAutosplitter.SuspendLayout();
+            this.groupboxAutosplitter.SuspendLayout();
             this.SuspendLayout();
             // 
             // cbxInventoryReset
@@ -55,7 +55,7 @@
             this.tableLayoutPanel1.ColumnCount = 1;
             this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
             this.tableLayoutPanel1.Controls.Add(this.groupBox2, 0, 0);
-            this.tableLayoutPanel1.Controls.Add(this.groupBoxAutosplitter, 0, 1);
+            this.tableLayoutPanel1.Controls.Add(this.groupboxAutosplitter, 0, 1);
             this.tableLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tableLayoutPanel1.Location = new System.Drawing.Point(0, 0);
             this.tableLayoutPanel1.Name = "tableLayoutPanel1";
@@ -101,29 +101,32 @@
             this.cbxUseIGT.Text = "Use game time";
             this.cbxUseIGT.UseVisualStyleBackColor = true;
             // 
-            // groupBoxAutosplitter
+            // groupboxAutosplitter
             // 
-            this.groupBoxAutosplitter.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.groupBoxAutosplitter.AutoSize = true;
-            this.groupBoxAutosplitter.Controls.Add(this.cbxAutosplitterEnabled);
-            this.groupBoxAutosplitter.Location = new System.Drawing.Point(3, 109);
-            this.groupBoxAutosplitter.Name = "groupBoxAutosplitter";
-            this.groupBoxAutosplitter.Size = new System.Drawing.Size(315, 133);
-            this.groupBoxAutosplitter.TabIndex = 4;
-            this.groupBoxAutosplitter.TabStop = false;
-            this.groupBoxAutosplitter.Text = "Autosplitter";
+            this.groupboxAutosplitter.AutoSize = true;
+            this.groupboxAutosplitter.Controls.Add(this.tblAutosplitter);
+            this.groupboxAutosplitter.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.groupboxAutosplitter.Location = new System.Drawing.Point(3, 109);
+            this.groupboxAutosplitter.Name = "groupboxAutosplitter";
+            this.groupboxAutosplitter.Size = new System.Drawing.Size(315, 133);
+            this.groupboxAutosplitter.TabIndex = 4;
+            this.groupboxAutosplitter.TabStop = false;
+            this.groupboxAutosplitter.Text = "Autosplitter";
             // 
-            // cbxAutosplitterEnabled
+            // tblAutosplitter
             // 
-            this.cbxAutosplitterEnabled.AutoSize = true;
-            this.cbxAutosplitterEnabled.Location = new System.Drawing.Point(7, 20);
-            this.cbxAutosplitterEnabled.Name = "cbxAutosplitterEnabled";
-            this.cbxAutosplitterEnabled.Size = new System.Drawing.Size(59, 17);
-            this.cbxAutosplitterEnabled.TabIndex = 0;
-            this.cbxAutosplitterEnabled.Text = "Enable";
-            this.cbxAutosplitterEnabled.UseVisualStyleBackColor = true;
+            this.tblAutosplitter.AutoScroll = true;
+            this.tblAutosplitter.ColumnCount = 1;
+            this.tblAutosplitter.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
+            this.tblAutosplitter.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 20F));
+            this.tblAutosplitter.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.tblAutosplitter.Location = new System.Drawing.Point(3, 16);
+            this.tblAutosplitter.Name = "tblAutosplitter";
+            this.tblAutosplitter.RowCount = 1;
+            this.tblAutosplitter.RowStyles.Add(new System.Windows.Forms.RowStyle());
+            this.tblAutosplitter.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
+            this.tblAutosplitter.Size = new System.Drawing.Size(309, 114);
+            this.tblAutosplitter.TabIndex = 0;
             // 
             // DSSettings
             // 
@@ -137,8 +140,7 @@
             this.tableLayoutPanel1.PerformLayout();
             this.groupBox2.ResumeLayout(false);
             this.groupBox2.PerformLayout();
-            this.groupBoxAutosplitter.ResumeLayout(false);
-            this.groupBoxAutosplitter.PerformLayout();
+            this.groupboxAutosplitter.ResumeLayout(false);
             this.ResumeLayout(false);
 
         }
@@ -150,7 +152,7 @@
         private System.Windows.Forms.GroupBox groupBox2;
         private System.Windows.Forms.CheckBox cbxStartTimer;
         private System.Windows.Forms.CheckBox cbxUseIGT;
-        private System.Windows.Forms.GroupBox groupBoxAutosplitter;
-        private System.Windows.Forms.CheckBox cbxAutosplitterEnabled;
+        private System.Windows.Forms.GroupBox groupboxAutosplitter;
+        private System.Windows.Forms.TableLayoutPanel tblAutosplitter;
     }
 }

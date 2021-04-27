@@ -1,4 +1,7 @@
-﻿using System;
+﻿using LiveSplit.DarkSoulsIGT.Conditions;
+using LiveSplit.Model;
+using System;
+using System.Collections.Generic;
 using System.Reflection;
 using System.Windows.Forms;
 using System.Xml;
@@ -15,7 +18,7 @@ namespace LiveSplit.DarkSoulsIGT
         public bool InventoryResetEnabled { get; set; }
         public bool StartTimerAutomatically { get; set; }
 
-        public DSSettings()
+        public DSSettings(LiveSplitState state)
         {
             InitializeComponent();
             this.Dock = DockStyle.Fill;
@@ -27,6 +30,49 @@ namespace LiveSplit.DarkSoulsIGT
             this.UseGameTime = DEFAULT_USE_GAME_TIME;
             this.InventoryResetEnabled = DEFAULT_INVENTORY_RESET_ENABLED;
             this.StartTimerAutomatically = DEFAULT_START_TIMER_AUTOMATICALLY;
+
+            // list
+            List<ConditionList> fromSettings = new List<ConditionList>();
+
+            tblAutosplitter.RowCount = state.Run.Count;
+            for (int i = 0; i < state.Run.Count; i++)
+            {
+                fromSettings.Add(new ConditionList(new List<Condition>()));
+
+                var split = state.Run[i];
+                GroupBox group = new GroupBox()
+                {
+                    Text = split.Name,
+                    Dock = DockStyle.Fill,
+                };
+
+                tblAutosplitter.RowStyles.Add(new RowStyle(SizeType.AutoSize, 50f));
+                tblAutosplitter.Controls.Add(group, 0, i);
+            }
+
+            ComboBox dropdown = new ComboBox();
+            ConditionBuilder.Builders.ForEach(builder =>
+            {
+                //groupBoxAutosplitter.Controls.Add(builder.GetControl());
+                builder.OnConditionReady += (condition) =>
+                {
+                    Console.WriteLine("lmao");
+                    //list
+                };
+                //dropdown.Items.Add(builder.Name);
+            });
+
+            //dropdown.SelectedIndexChanged += (sender, e) =>
+            //{
+            //    ConditionBuilder b = ConditionBuilder.Builders[dropdown.SelectedIndex];
+            //    var table = b.GetControl();
+            //};
+
+            //TableLayoutPanel panel = new TableLayoutPanel();
+            //panel.Anchor = AnchorStyles.Left;
+            //ComboBox cbx = new ComboBox();
+            //panel.Controls.Add(cbx);
+            //this.groupBoxAutosplitter.Controls.Add(panel);    
 
             //this.lblVersion.Text = Assembly.GetExecutingAssembly().GetName().Version.ToString();
         }

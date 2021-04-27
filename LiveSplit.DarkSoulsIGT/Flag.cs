@@ -1,4 +1,6 @@
-﻿namespace LiveSplit.DarkSoulsIGT {
+﻿using System;
+
+namespace LiveSplit.DarkSoulsIGT {
     public enum FlagTypes {
         Boss
     }
@@ -20,6 +22,11 @@
         public BossFlag(string name, int flagID) : base(FlagTypes.Boss, flagID)
         {
             this.Name = name;
+        }
+
+        public override string ToString()
+        {
+            return Name;
         }
     }
 

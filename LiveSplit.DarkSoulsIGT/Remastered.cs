@@ -1,14 +1,4 @@
-﻿using System;
-using PropertyHook;
-using System.IO;
-using System.Security.Cryptography;
-using System.Diagnostics;
-using System.Linq;
-using System.Collections.Generic;
-using System.Runtime.InteropServices;
-
-namespace LiveSplit.DarkSoulsIGT
-{
+﻿namespace LiveSplit.DarkSoulsIGT {
     //class Remastered : DarkSouls
     //{
     //    /// <summary>

@@ -1,4 +1,6 @@
-﻿namespace LiveSplit.DarkSoulsIGT.Conditions {
+﻿using System.Windows.Forms;
+
+namespace LiveSplit.DarkSoulsIGT.Conditions {
     class OnBossDied: Condition {
         private BossFlag boss;
         private bool isDead = false;

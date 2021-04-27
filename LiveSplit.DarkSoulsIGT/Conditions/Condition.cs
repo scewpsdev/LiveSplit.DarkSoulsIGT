@@ -1,8 +1,63 @@
-﻿using System.Collections.Generic;
-using System.Linq;
+﻿using System;
+using System.Collections.Generic;
+using System.Windows.Forms;
 
 namespace LiveSplit.DarkSoulsIGT.Conditions {
+
+    public enum InputTypes {
+        Dropdown,
+        number
+    }
+
+    public abstract class ConditionBuilder {
+
+        public abstract event OnConditionReadyEventHandler OnConditionReady;
+
+        public static List<ConditionBuilder> Builders = new List<ConditionBuilder>()
+        {
+            new BossDiedBuilder(),
+        };
+
+        public abstract string Name { get; }
+
+        public abstract TableLayoutPanel GetControl();
+
+        public delegate void OnConditionReadyEventHandler(Condition condition);
+    }
+
+    public class BossDiedBuilder : ConditionBuilder {
+        public override string Name => "Bosses";
+
+        public override event OnConditionReadyEventHandler OnConditionReady;
+
+        public override TableLayoutPanel GetControl()
+        {
+            TableLayoutPanel panel = new TableLayoutPanel();
+            ComboBox dropdown = new ComboBox();
+
+            List<BossFlag> sorted = new List<BossFlag>(Flags.Bosses);
+            sorted.Sort((a, b) =>
+            {
+                return a.Name.CompareTo(b.Name);
+            });
+
+            foreach (var boss in sorted)
+            {
+                dropdown.Items.Add(boss);
+            }
+
+            dropdown.SelectedIndexChanged += (s, e) =>
+            {
+                OnConditionReady?.Invoke(new OnBossDied((BossFlag)dropdown.SelectedItem));
+            };
+
+            panel.Controls.Add(dropdown);
+            return panel;
+        }
+    }
+
     public abstract class Condition {
+
         public event OnConditionCompleteEventHandler OnConditionComplete;
 
         public void RaiseOnConditionComplete()
@@ -21,62 +76,52 @@ namespace LiveSplit.DarkSoulsIGT.Conditions {
 
         public event OnConditionListCompleteEventHandler OnConditionListComplete;
 
-        bool enabled;
-        LinkedListNode<Condition> current;
-        LinkedList<Condition> conditions;
+        int current = 0;
+        List<Condition> conditions;
 
         public ConditionList(List<Condition> conditions)
         {
-            this.enabled = false;
-            this.conditions = new LinkedList<Condition>(conditions);
+            this.conditions = conditions;
+            foreach (var condition in conditions)
+            {
+                condition.OnConditionComplete += Condition_OnConditionComplete;
+            }
+        }
+
+        private void Condition_OnConditionComplete()
+        {
+            conditions[current].Stop();
+            
+            if (current == conditions.Count - 1)
+            {
+                OnConditionListComplete?.Invoke();
+            }
+            else
+            {
+                current += 1;
+                conditions[current].Start();
+            }
         }
 
         public void Reset()
         {
-            enabled = false;
-            var e = conditions.GetEnumerator();
-            while (e.MoveNext())
+            foreach (var condition in conditions)
             {
-                e.Current.Stop();
-                e.Current.Reset();
-                e.Current.OnConditionComplete -= Current_OnConditionComplete;
-            };
+                condition.Reset();
+                condition.Stop();
+            }
         }
 
         public void Start()
         {
-            if (!enabled)
-            {
-                enabled = true;
-                if (conditions.First != null)
-                {
-                    current = conditions.First;
-                    WaitNext();
-                }
-            }
+            conditions[current].Start();
         }
 
-        public void WaitNext()
+        public void Stop()
         {
-            current.Value.OnConditionComplete += Current_OnConditionComplete;
-            current.Value.Start();
+            conditions[current].Stop();
         }
 
-        private void Current_OnConditionComplete()
-        {
-            current.Value.OnConditionComplete -= Current_OnConditionComplete;
-            current.Value.Stop();
-
-            if (current.Next != null)
-            {
-                current = current.Next;
-                WaitNext();
-            }
-            else
-            {
-                OnConditionListComplete?.Invoke();
-            }
-        }
 
         public delegate void OnConditionListCompleteEventHandler();
     }

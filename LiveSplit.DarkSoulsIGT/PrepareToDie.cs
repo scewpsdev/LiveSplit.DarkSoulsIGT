@@ -1,13 +1,9 @@
 ﻿using System;
-using PropertyHook;
-using System.Collections.Generic;
-using System.Text;
 using System.IO;
 using System.Diagnostics;
 using LiveSplit.ComponentUtil;
 
-namespace LiveSplit.DarkSoulsIGT
-{
+namespace LiveSplit.DarkSoulsIGT {
     public class PTDE : DarkSouls {
         public override GameVersion Version => GameVersion.PrepareToDie;
         protected override int rollbackMs => 594;
