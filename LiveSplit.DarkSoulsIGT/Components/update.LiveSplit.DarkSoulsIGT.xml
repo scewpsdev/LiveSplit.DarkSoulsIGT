@@ -1,4 +1,12 @@
 ﻿<updates>
+  <update version="4.6.0.0">
+    <files>
+      <file path="Components/LiveSplit.DarkSoulsIGT.dll" status="changed" />
+    </files>
+    <changelog>
+      <change>Added support for setups where both the Japanese and regular DSR savefile exists on the user's documents.</change>
+    </changelog>
+  </update>
   <update version="4.5.0.0">
     <files>
       <file path="Components/LiveSplit.DarkSoulsIGT.dll" status="changed" />
