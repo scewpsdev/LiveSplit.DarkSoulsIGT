@@ -4,10 +4,8 @@ using System.Collections.Generic;
 using System.Text;
 using System.IO;
 
-namespace LiveSplit.DarkSoulsIGT
-{
-    class PrepareToDie : DarkSouls
-    {
+namespace LiveSplit.DarkSoulsIGT {
+    class PrepareToDie : DarkSouls {
         /// <summary>
         /// Constants
         /// </summary>
@@ -17,7 +15,7 @@ namespace LiveSplit.DarkSoulsIGT
         private const string INVENTORY_RESET_AOB = "8B 4C 24 34 8B 44 24 2C 89 8A 38 01 00 00 8B 90 08 01 00 00 C1 E2 10 0B 90 00 01 00 00 8B C1 8B CD 89 14 AD ? ? ? ?";
         private const string SL2_INFORMATION_AOB = "00 00 00 00 66 89 0D ? ? ? ? C3 CC CC CC CC CC 83 3D";
 
-        // lmao
+        // used for rare GFWL savefiles
         public PHPointer pSL2 { get; set; }
 
         /// <summary>
@@ -66,7 +64,7 @@ namespace LiveSplit.DarkSoulsIGT
         {
             get => pCurrentSlot.ReadInt32(0xA70);
         }
-        
+
         /// <summary>
         /// Current new game count
         /// </summary>
@@ -107,6 +105,7 @@ namespace LiveSplit.DarkSoulsIGT
 
             if (variable != 0)
             {
+                // some old gfwl savefiles are still supported
                 string gfwl_id = ReadUnicode(Process.CreateChildPointer(pSL2, 0x0));
                 path = Path.Combine(path, gfwl_id);
             }

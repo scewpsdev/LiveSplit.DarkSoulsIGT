@@ -10,7 +10,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>LiveSplit.DarkSoulsIGT</RootNamespace>
     <AssemblyName>LiveSplit.DarkSoulsIGT</AssemblyName>
-    <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />
     <NuGetPackageImportStamp>
@@ -59,12 +59,18 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Assembly.cs" />
     <Compile Include="DarkSouls.cs" />
     <Compile Include="DSComponent.cs" />
     <Compile Include="DSFactory.cs" />
     <Compile Include="Model.cs" />
     <Compile Include="PrepareToDie.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
     <Compile Include="Remastered.cs" />
     <Compile Include="SL2Reader.cs" />
     <Compile Include="UI\DSSettings.cs">
@@ -75,6 +81,10 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
     <EmbeddedResource Include="UI\DSSettings.resx">
       <DependentUpon>DSSettings.cs</DependentUpon>
     </EmbeddedResource>
@@ -84,6 +94,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Components\update.LiveSplit.DarkSoulsIGT.xml" />
+    <None Include="Resources\CallJapan.txt" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">

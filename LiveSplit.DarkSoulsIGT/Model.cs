@@ -2,17 +2,14 @@
 using PropertyHook;
 using System.Diagnostics;
 
-namespace LiveSplit.DarkSoulsIGT
-{
-    internal enum GameVersion
-    {
+namespace LiveSplit.DarkSoulsIGT {
+    internal enum GameVersion {
         PrepareToDie,
         Remastered,
         None,
     }
 
-    class Model : PHook
-    {
+    class Model : PHook {
         /// <summary>
         /// Constants
         /// </summary>
@@ -108,9 +105,12 @@ namespace LiveSplit.DarkSoulsIGT
             }
         }
 
+        /// <summary>
+        /// Return the raw In-Game Time from Memory if possible
+        /// </summary>
+        /// <returns></returns>
         public int GetMemoryInGameTime()
         {
-
             return (Ready) ? DarkSouls.MemoryIGT : 0;
         }
 
@@ -154,12 +154,12 @@ namespace LiveSplit.DarkSoulsIGT
                             // if the player isn't loaded, then credits are playing (video cutscene is playing)
                             if (!_isLoaded && !creditsRolling)
                             {
-                                int fileIGT = SL2Reader.GetCurrentSlotIGT(_tmpSavefilePath, previousCurrentSaveSlot);
-                                if (fileIGT != -1)
+                                int? fileIGT = SL2Reader.GetCurrentSlotIGT(_tmpSavefilePath, previousCurrentSaveSlot, Version);
+                                if (fileIGT.HasValue)
                                 {
                                     creditsRolling = true;
                                     savefilePath = _tmpSavefilePath;
-                                    IGT = fileIGT;
+                                    IGT = fileIGT.Value;
                                 }
                                 else
                                 {
@@ -196,11 +196,11 @@ namespace LiveSplit.DarkSoulsIGT
                         {
                             quitoutLatch = true;
 
-                            int fileIGT = SL2Reader.GetCurrentSlotIGT(_tmpSavefilePath, previousCurrentSaveSlot);
-                            if (fileIGT != -1)
+                            int? fileIGT = SL2Reader.GetCurrentSlotIGT(_tmpSavefilePath, previousCurrentSaveSlot, Version);
+                            if (fileIGT.HasValue)
                             {
                                 savefilePath = _tmpSavefilePath;
-                                IGT = fileIGT;
+                                IGT = fileIGT.Value;
                             }
                             else
                             {
@@ -222,17 +222,18 @@ namespace LiveSplit.DarkSoulsIGT
                 {
                     localIGT = IGT;
                 }
-            } else
+            }
+            else
             {
                 // If game is closed (FQ or crash) and timer was running, return IGT from savefile
                 if (localIGT > 0 && !unhookedLatch)
                 {
                     unhookedLatch = true;
 
-                    int fileIGT = SL2Reader.GetCurrentSlotIGT(savefilePath, previousCurrentSaveSlot);
-                    if (fileIGT != -1)
+                    int? fileIGT = SL2Reader.GetCurrentSlotIGT(savefilePath, previousCurrentSaveSlot, Version);
+                    if (fileIGT.HasValue)
                     {
-                        localIGT = fileIGT;
+                        localIGT = fileIGT.Value;
                     }
                 }
             }

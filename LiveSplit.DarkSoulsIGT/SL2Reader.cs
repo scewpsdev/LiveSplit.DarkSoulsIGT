@@ -24,16 +24,24 @@ namespace LiveSplit.DarkSoulsIGT
         /// </summary>
         /// <param name="path">path to the SL2 file</param>
         /// <param name="slot">the slot to read the IGT from</param>
+        /// <param name="version">The game version</param>
         /// <returns>IGT or -1 if sometimes failed</returns>
-        public static int GetCurrentSlotIGT(string path, int slot)
+        public static int? GetCurrentSlotIGT(string path, int slot, GameVersion version)
         {
-            int igt = -1;
+            int? igt = null;
+
+            // Path may be null if this function is called before
+            // the game was hooked
+            if (path == null)
+            {
+                return igt;
+            }
 
             try
             {
                 if (isReadable(path))
                 {
-                    if (path.Contains("DarkSouls"))
+                    if (version == GameVersion.PrepareToDie)
                     {
                         byte[] file = File.ReadAllBytes(path);
                         int saveSlotSize = 0x60020;
@@ -45,7 +53,7 @@ namespace LiveSplit.DarkSoulsIGT
                         int igtOffset = 0x2dc + (saveSlotSize * slot);
                         igt = BitConverter.ToInt32(file, igtOffset);
                     }
-                    else if (path.Contains("DARK SOULS REMASTERED"))
+                    else if (version == GameVersion.Remastered)
                     {
                         // Each USERDATA file is individually AES - 128 - CBC encrypted.
                         byte[] file = File.ReadAllBytes(path);
@@ -57,7 +65,7 @@ namespace LiveSplit.DarkSoulsIGT
                 }
             } catch
             {
-                igt = -1;
+                igt = null;
             }
 
 

@@ -1,10 +1,8 @@
 ﻿using System;
 using PropertyHook;
 
-namespace LiveSplit.DarkSoulsIGT
-{
-    public abstract class DarkSouls
-    {
+namespace LiveSplit.DarkSoulsIGT {
+    public abstract class DarkSouls {
         /// <summary>
         /// Local private variables
         /// </summary>
@@ -53,6 +51,7 @@ namespace LiveSplit.DarkSoulsIGT
         {
             this.Process = process;
         }
+
 
         /// <summary>0
         /// Reset the inventory indexes
