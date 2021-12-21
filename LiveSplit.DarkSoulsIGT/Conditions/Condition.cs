@@ -2,14 +2,17 @@
 using System.Collections.Generic;
 using System.Windows.Forms;
 
-namespace LiveSplit.DarkSoulsIGT.Conditions {
+namespace LiveSplit.DarkSoulsIGT.Conditions
+{
 
-    public enum InputTypes {
+    public enum InputTypes
+    {
         Dropdown,
         number
     }
 
-    public abstract class ConditionBuilder {
+    public abstract class ConditionBuilder
+    {
 
         public abstract event OnConditionReadyEventHandler OnConditionReady;
 
@@ -25,7 +28,8 @@ namespace LiveSplit.DarkSoulsIGT.Conditions {
         public delegate void OnConditionReadyEventHandler(Condition condition);
     }
 
-    public class BossDiedBuilder : ConditionBuilder {
+    public class BossDiedBuilder : ConditionBuilder
+    {
         public override string Name => "Bosses";
 
         public override event OnConditionReadyEventHandler OnConditionReady;
@@ -56,9 +60,31 @@ namespace LiveSplit.DarkSoulsIGT.Conditions {
         }
     }
 
-    public abstract class Condition {
+    public enum ConditionType : int
+    {
+        None = -1,
+        BossDied,
+        Quitout,
+        ItemObtained,
+    }
+
+    public abstract class Condition
+    {
+        public static readonly string[] Names =
+        {
+            "Boss",
+            "Quitout",
+            "Item",
+        };
 
         public event OnConditionCompleteEventHandler OnConditionComplete;
+
+        public ConditionType type = ConditionType.None;
+
+        public Condition(ConditionType type)
+        {
+            this.type = type;
+        }
 
         public void RaiseOnConditionComplete()
         {
@@ -72,12 +98,13 @@ namespace LiveSplit.DarkSoulsIGT.Conditions {
         public delegate void OnConditionCompleteEventHandler();
     }
 
-    public class ConditionList {
+    public class ConditionList
+    {
 
         public event OnConditionListCompleteEventHandler OnConditionListComplete;
 
         int current = 0;
-        List<Condition> conditions;
+        public List<Condition> conditions;
 
         public ConditionList(List<Condition> conditions)
         {
@@ -91,7 +118,7 @@ namespace LiveSplit.DarkSoulsIGT.Conditions {
         private void Condition_OnConditionComplete()
         {
             conditions[current].Stop();
-            
+
             if (current == conditions.Count - 1)
             {
                 OnConditionListComplete?.Invoke();

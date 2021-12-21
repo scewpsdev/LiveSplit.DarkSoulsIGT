@@ -20,7 +20,7 @@
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
-    <OutputPath>..\..\..\LiveSplit\Components\</OutputPath>
+    <OutputPath>..\..\..\Tools\LiveSplit\Components\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -39,7 +39,7 @@
       <HintPath>..\packages\Costura.Fody.4.1.0\lib\net40\Costura.dll</HintPath>
     </Reference>
     <Reference Include="LiveSplit.Core">
-      <HintPath>..\..\..\LiveSplit\LiveSplit.Core.dll</HintPath>
+      <HintPath>..\..\..\Tools\LiveSplit\LiveSplit.Core.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -52,7 +52,7 @@
     <Reference Include="System.Net.Http" />
     <Reference Include="System.Xml" />
     <Reference Include="UpdateManager">
-      <HintPath>..\..\..\LiveSplit\UpdateManager.dll</HintPath>
+      <HintPath>..\..\..\Tools\LiveSplit\UpdateManager.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
@@ -60,6 +60,7 @@
     <Compile Include="Conditions\OnBossDied.cs" />
     <Compile Include="Conditions\OnQuitout.cs" />
     <Compile Include="DarkSouls.cs" />
+    <Compile Include="UI\AutosplitterUI.cs" />
     <Compile Include="DSComponent.cs" />
     <Compile Include="DSFactory.cs" />
     <Compile Include="Flag.cs" />

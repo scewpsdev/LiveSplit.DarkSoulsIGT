@@ -1,11 +1,15 @@
 ﻿using System;
 
-namespace LiveSplit.DarkSoulsIGT {
-    public enum FlagTypes {
-        Boss
+namespace LiveSplit.DarkSoulsIGT
+{
+    public enum FlagTypes
+    {
+        Boss,
+        Item,
     }
 
-    public class Flag {
+    public class Flag
+    {
         public FlagTypes Type { get; private set; }
         public int FlagID { get; private set; }
 
@@ -16,7 +20,8 @@ namespace LiveSplit.DarkSoulsIGT {
         }
     }
 
-    public class BossFlag : Flag {
+    public class BossFlag : Flag
+    {
         public string Name { get; private set; }
 
         public BossFlag(string name, int flagID) : base(FlagTypes.Boss, flagID)
@@ -30,4 +35,18 @@ namespace LiveSplit.DarkSoulsIGT {
         }
     }
 
+    public class ItemFlag : Flag
+    {
+        public string name;
+
+        public ItemFlag(string name, int flagID) : base(FlagTypes.Item, flagID)
+        {
+            this.name = name;
+        }
+
+        public override string ToString()
+        {
+            return name;
+        }
+    }
 }

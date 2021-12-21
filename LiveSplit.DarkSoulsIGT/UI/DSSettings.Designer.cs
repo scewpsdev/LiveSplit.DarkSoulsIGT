@@ -123,7 +123,7 @@
             this.tblAutosplitter.Location = new System.Drawing.Point(3, 16);
             this.tblAutosplitter.Name = "tblAutosplitter";
             this.tblAutosplitter.RowCount = 1;
-            //this.tblAutosplitter.RowStyles.Add(new System.Windows.Forms.RowStyle());
+            // NOTE(scewps): Had to comment this out because it screwed with the dynamically generated layouts
             //this.tblAutosplitter.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
             this.tblAutosplitter.Size = new System.Drawing.Size(309, 114);
             this.tblAutosplitter.TabIndex = 0;

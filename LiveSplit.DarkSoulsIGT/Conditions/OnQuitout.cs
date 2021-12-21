@@ -4,12 +4,14 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace LiveSplit.DarkSoulsIGT.Conditions {
-    class OnQuitout : Condition {
+namespace LiveSplit.DarkSoulsIGT.Conditions
+{
+    class OnQuitout : Condition
+    {
         int count = 0;
         int total = 1;
 
-        public OnQuitout(int total = 1)
+        public OnQuitout(int total = 1) : base(ConditionType.Quitout)
         {
             this.total = total;
         }

@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace LiveSplit.DarkSoulsIGT {
-    public static class Flags {
+namespace LiveSplit.DarkSoulsIGT
+{
+    public static class Flags
+    {
         private static readonly Dictionary<string, int> groups = new Dictionary<string, int>()
         {
             {"0", 0x00000},
@@ -95,6 +97,19 @@ namespace LiveSplit.DarkSoulsIGT {
             new BossFlag("Centipede Demon", 11410901),
             new BossFlag("Gwyndolin", 11510900),
             new BossFlag("Stray Demon", 11810900),
+        };
+
+        // TODO: complete this list
+        public static string[] ItemTypes =
+        {
+            "Melee Weapons",
+            "Rings",
+        };
+
+        // TODO: complete this list and set appropriate flags
+        public static ItemFlag[] TestItems =
+        {
+            new ItemFlag("Red Tearstone Ring", 0),
         };
     }
 }
