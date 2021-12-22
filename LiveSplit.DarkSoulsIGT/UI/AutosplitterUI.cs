@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -55,6 +56,7 @@ namespace LiveSplit.DarkSoulsIGT
                 tblAutosplitter.RowStyles.Add(splitStyle);
 
                 SplitUI splitUI = CreateSplitUI(split, conditionList);
+                splitUIs.Add(splitUI);
 
                 tblAutosplitter.Controls.Add(splitUI.box, 0, i);
             }
@@ -131,7 +133,7 @@ namespace LiveSplit.DarkSoulsIGT
                 int conditionIdx = conditionList.conditions.Count;
                 conditionList.conditions.Add(null);
 
-                ConditionUI conditionUI = CreateConditionUI(null, conditionList, splitUI);
+                ConditionUI conditionUI = CreateConditionUI(null, conditionIdx, conditionList, splitUI);
                 splitUI.conditions.Add(conditionUI);
                 splitUI.panel.Controls.Add(conditionUI.panel);
                 splitUI.panel.Controls.SetChildIndex(conditionUI.panel, 1 + conditionIdx);
@@ -140,7 +142,7 @@ namespace LiveSplit.DarkSoulsIGT
             return addConditionButton;
         }
 
-        static ConditionUI CreateConditionUI(Condition condition, ConditionList conditionList, SplitUI splitUI)
+        static ConditionUI CreateConditionUI(Condition condition, int conditionIdx, ConditionList conditionList, SplitUI splitUI)
         {
             ConditionUI conditionUI = new ConditionUI();
 
@@ -148,7 +150,7 @@ namespace LiveSplit.DarkSoulsIGT
             panel.ColumnCount = 2;
             panel.AutoSize = true;
             panel.AutoSizeMode = AutoSizeMode.GrowAndShrink;
-            panel.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 0.6f));
+            panel.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 0.8f));
             panel.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 0.2f));
             conditionUI.panel = panel;
 
@@ -156,35 +158,40 @@ namespace LiveSplit.DarkSoulsIGT
             optionsPanel.ColumnCount = 3; // TODO(scewps): set depending on condition type
             optionsPanel.RowCount = 1;
             optionsPanel.AutoSize = true;
-
             optionsPanel.AutoSizeMode = AutoSizeMode.GrowAndShrink;
 
-            ComboBox conditionType = new ComboBox();
-            optionsPanel.Controls.Add(conditionType);
+            ComboBox conditionTypeDropdown = new ComboBox();
+            optionsPanel.Controls.Add(conditionTypeDropdown);
 
-            conditionType.Items.AddRange(Condition.Names);
-            conditionType.SelectedIndexChanged += (sender, e) =>
+            conditionTypeDropdown.Items.AddRange(Condition.Names);
+            conditionTypeDropdown.SelectedIndexChanged += (sender, e) =>
             {
+                ConditionType conditionType = (ConditionType)conditionTypeDropdown.SelectedIndex;
+
+                Control conditionOptions = CreateConditionOptions(conditionType, optionsPanel);
+                for (int k = optionsPanel.Controls.IndexOf(conditionTypeDropdown) + 1; k < optionsPanel.Controls.Count; k++)
+                    optionsPanel.Controls.RemoveAt(k);
+                optionsPanel.Controls.Add(conditionOptions);
+
+                Condition newCondition = CreateCondition(conditionType);
+                conditionList.conditions[conditionIdx] = newCondition;
                 //Control conditionOptions = CreateConditionOptions(conditionType.SelectedIndex, conditionPanel);
                 //conditionList.conditions[i] = CreateCondition(conditionType.SelectedIndex);
 
-                /*
                 // Remove all options after the condition type selection box, then add the options specific to this condition type
-                for (int k = conditionPanel.Controls.IndexOf(conditionType) + 1; k < conditionPanel.Controls.Count; k++)
-                    conditionPanel.Controls.RemoveAt(k);
-                */
-                //conditionPanel.Controls.Add(conditionOptions);
             };
 
             panel.Controls.Add(optionsPanel);
 
             Button removeButton = new Button();
-            removeButton.Text = "Remove condition";
-            removeButton.AutoSize = true;
+            //removeButton.Text = "Remove condition";
+            removeButton.BackgroundImage = Image.FromFile("Components/LiveSplit.DarkSoulsIGT.Icon_ConditionRemove.png");
+            removeButton.TextImageRelation = TextImageRelation.Overlay;
+            //removeButton.AutoSize = true;
+            removeButton.Size = new Size(28, 28);
+            removeButton.BackgroundImageLayout = ImageLayout.Stretch;
             removeButton.Click += (sender, e) =>
             {
-                int conditionIdx = splitUI.conditions.IndexOf(conditionUI);
-
                 conditionList.conditions.RemoveAt(conditionIdx);
                 splitUI.conditions.RemoveAt(conditionIdx);
                 splitUI.panel.Controls.RemoveAt(1 + conditionIdx);
@@ -195,15 +202,15 @@ namespace LiveSplit.DarkSoulsIGT
         }
 
         // Returns the correct option menu for this condition type
-        static Control CreateConditionOptions(int conditionType, Panel splitPanel)
+        static Control CreateConditionOptions(ConditionType conditionType, Panel splitPanel)
         {
             switch (conditionType)
             {
-                case 0: // Boss
+                case ConditionType.BossDied:
                     return CreateBossConditionOption();
-                case 1: // Quitout
+                case ConditionType.Quitout:
                     return null;
-                case 2: // Item
+                case ConditionType.ItemObtained:
                     return CreateItemConditionOption(splitPanel);
                 default:
                     Debug.Assert(false);
@@ -211,15 +218,15 @@ namespace LiveSplit.DarkSoulsIGT
             }
         }
 
-        static Condition CreateCondition(int conditionType)
+        static Condition CreateCondition(ConditionType conditionType)
         {
             switch (conditionType)
             {
-                case 0: // Boss
+                case ConditionType.BossDied:
                     return new OnBossDied();
-                case 1: // Quitout
+                case ConditionType.Quitout:
                     return null;
-                case 2: // Item
+                case ConditionType.ItemObtained:
                     //return new OnItemObtained(); TODO: implement this
                     return null;
                 default:
@@ -260,7 +267,7 @@ namespace LiveSplit.DarkSoulsIGT
             return testItemNames;
         }
 
-        static Control CreateItemConditionOption(Panel splitPanel)
+        static Control CreateItemConditionOption(Panel conditionPanel)
         {
             ComboBox itemType = new ComboBox();
             itemType.Items.AddRange(Flags.ItemTypes);
@@ -270,9 +277,9 @@ namespace LiveSplit.DarkSoulsIGT
                 itemNames.Items.AddRange(GetItemNames(itemType.SelectedIndex));
 
                 // Remove all options after the condition type selection box, then add the options specific to this condition type
-                for (int j = splitPanel.Controls.IndexOf(itemType) + 1; j < splitPanel.Controls.Count; j++)
-                    splitPanel.Controls.RemoveAt(j);
-                splitPanel.Controls.Add(itemNames);
+                for (int j = conditionPanel.Controls.IndexOf(itemType) + 1; j < conditionPanel.Controls.Count; j++)
+                    conditionPanel.Controls.RemoveAt(j);
+                conditionPanel.Controls.Add(itemNames);
             };
             return itemType;
         }
