@@ -6,14 +6,18 @@ using System.Xml;
 using LiveSplit.DarkSoulsIGT.Conditions;
 using System.Collections.Generic;
 
-namespace LiveSplit.DarkSoulsIGT {
-    public class DSComponent : LogicComponent {
+namespace LiveSplit.DarkSoulsIGT
+{
+    public class DSComponent : LogicComponent
+    {
         private readonly TimerModel timerModel;
         private readonly LiveSplitState state;
         private readonly DSSettings settings;
 
         int current = 0;
         List<ConditionList> splits;
+
+        AutosplitterUI autosplitterUI;
 
         public override string ComponentName => "Dark Souls & Dark Souls: Remastered In-Game Timer";
 
@@ -35,6 +39,8 @@ namespace LiveSplit.DarkSoulsIGT {
             };
 
             Model.Instance.OnDarkSoulsHooked += Instance_OnDarkSoulsHooked;
+
+            autosplitterUI = new AutosplitterUI(settings.tblAutosplitter, state.Run);
         }
 
         private void Split_OnConditionListComplete()
@@ -51,7 +57,8 @@ namespace LiveSplit.DarkSoulsIGT {
             state.IsGameTimePaused = true;
 
             // TODO get the list from settings
-            List<ConditionList> fromSettings = new List<ConditionList>();
+            //List<ConditionList> fromSettings = new List<ConditionList>();
+            List<ConditionList> fromSettings = autosplitterUI.splitConditions;
 
             fromSettings.Add(new ConditionList(new List<Condition>()
             {

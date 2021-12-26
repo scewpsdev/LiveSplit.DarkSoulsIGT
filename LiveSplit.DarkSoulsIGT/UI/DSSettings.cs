@@ -18,8 +18,6 @@ namespace LiveSplit.DarkSoulsIGT
         public bool InventoryResetEnabled { get; set; }
         public bool StartTimerAutomatically { get; set; }
 
-        AutosplitterUI autosplitterUI;
-
         public DSSettings(LiveSplitState state)
         {
             InitializeComponent();
@@ -32,8 +30,6 @@ namespace LiveSplit.DarkSoulsIGT
             this.UseGameTime = DEFAULT_USE_GAME_TIME;
             this.InventoryResetEnabled = DEFAULT_INVENTORY_RESET_ENABLED;
             this.StartTimerAutomatically = DEFAULT_START_TIMER_AUTOMATICALLY;
-
-            autosplitterUI = new AutosplitterUI(tblAutosplitter, state.Run);
         }
 
         public XmlNode GetSettings(XmlDocument document)

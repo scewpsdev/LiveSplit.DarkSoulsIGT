@@ -4,7 +4,7 @@ namespace LiveSplit.DarkSoulsIGT.Conditions
 {
     class OnBossDied : Condition
     {
-        private BossFlag boss = null;
+        public BossFlag boss = null;
         private bool isDead = false;
 
         public OnBossDied() : base(ConditionType.BossDied)

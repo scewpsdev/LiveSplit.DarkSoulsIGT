@@ -13,7 +13,6 @@ namespace LiveSplit.DarkSoulsIGT.Conditions
 
     public abstract class ConditionBuilder
     {
-
         public abstract event OnConditionReadyEventHandler OnConditionReady;
 
         public static List<ConditionBuilder> Builders = new List<ConditionBuilder>()
@@ -117,16 +116,19 @@ namespace LiveSplit.DarkSoulsIGT.Conditions
 
         private void Condition_OnConditionComplete()
         {
-            conditions[current].Stop();
+            if (conditions.Count > 0)
+            {
+                conditions[current].Stop();
 
-            if (current == conditions.Count - 1)
-            {
-                OnConditionListComplete?.Invoke();
-            }
-            else
-            {
-                current += 1;
-                conditions[current].Start();
+                if (current == conditions.Count - 1)
+                {
+                    OnConditionListComplete?.Invoke();
+                }
+                else
+                {
+                    current += 1;
+                    conditions[current].Start();
+                }
             }
         }
 
@@ -141,12 +143,18 @@ namespace LiveSplit.DarkSoulsIGT.Conditions
 
         public void Start()
         {
-            conditions[current].Start();
+            if (conditions.Count > 0)
+            {
+                conditions[current].Start();
+            }
         }
 
         public void Stop()
         {
-            conditions[current].Stop();
+            if (conditions.Count > 0)
+            {
+                conditions[current].Stop();
+            }
         }
 
 

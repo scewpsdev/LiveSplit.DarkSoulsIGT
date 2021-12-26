@@ -153,6 +153,6 @@
         private System.Windows.Forms.CheckBox cbxStartTimer;
         private System.Windows.Forms.CheckBox cbxUseIGT;
         private System.Windows.Forms.GroupBox groupboxAutosplitter;
-        private System.Windows.Forms.TableLayoutPanel tblAutosplitter;
+        public System.Windows.Forms.TableLayoutPanel tblAutosplitter;
     }
 }

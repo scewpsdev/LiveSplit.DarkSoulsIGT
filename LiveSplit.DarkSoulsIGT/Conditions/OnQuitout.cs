@@ -8,8 +8,8 @@ namespace LiveSplit.DarkSoulsIGT.Conditions
 {
     class OnQuitout : Condition
     {
+        public int total = 1;
         int count = 0;
-        int total = 1;
 
         public OnQuitout(int total = 1) : base(ConditionType.Quitout)
         {
