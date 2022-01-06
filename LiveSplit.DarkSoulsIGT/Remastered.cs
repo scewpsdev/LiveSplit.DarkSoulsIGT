@@ -1,4 +1,5 @@
-﻿namespace LiveSplit.DarkSoulsIGT {
+﻿namespace LiveSplit.DarkSoulsIGT
+{
     //class Remastered : DarkSouls
     //{
     //    /// <summary>

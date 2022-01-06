@@ -99,7 +99,7 @@ namespace LiveSplit.DarkSoulsIGT
             box.AutoSizeMode = AutoSizeMode.GrowAndShrink;
             splitUI.box = box;
 
-            int conditionCount = conditionList.conditions.Count;
+            int conditionCount = conditionList.ConditionCount;
 
             TableLayoutPanel panel = new TableLayoutPanel();
             panel.RowCount = conditionCount + 1; // + 1 for the add button
@@ -130,8 +130,8 @@ namespace LiveSplit.DarkSoulsIGT
             addConditionButton.AutoSize = true;
             addConditionButton.Click += (sender, e) =>
             {
-                int conditionIdx = conditionList.conditions.Count;
-                conditionList.conditions.Add(null);
+                int conditionIdx = conditionList.ConditionCount;
+                conditionList.AddCondition(null);
 
                 ConditionUI conditionUI = CreateConditionUI(null, conditionIdx, conditionList, splitUI);
                 splitUI.conditions.Add(conditionUI);
@@ -169,7 +169,7 @@ namespace LiveSplit.DarkSoulsIGT
                 ConditionType conditionType = (ConditionType)conditionTypeDropdown.SelectedIndex;
 
                 Condition newCondition = CreateCondition(conditionType);
-                conditionList.conditions[conditionIdx] = newCondition;
+                conditionList.AddCondition(conditionIdx, newCondition);
 
                 // Remove all options after the condition type selection box, then add the options specific to this condition type
                 for (int k = optionsPanel.Controls.IndexOf(conditionTypeDropdown) + 1; k < optionsPanel.Controls.Count; k++)
@@ -192,7 +192,7 @@ namespace LiveSplit.DarkSoulsIGT
             removeButton.BackgroundImageLayout = ImageLayout.Stretch;
             removeButton.Click += (sender, e) =>
             {
-                conditionList.conditions.RemoveAt(conditionIdx);
+                conditionList.RemoveCondition(conditionIdx);
                 splitUI.conditions.RemoveAt(conditionIdx);
                 splitUI.panel.Controls.RemoveAt(1 + conditionIdx);
             };
@@ -211,7 +211,7 @@ namespace LiveSplit.DarkSoulsIGT
                 case ConditionType.Quitout:
                     return CreateQuitoutConditionOption((OnQuitout)condition);
                 case ConditionType.ItemObtained:
-                    return CreateItemConditionOption(/*(OnItemObtained)condition, */splitPanel);
+                    return CreateItemConditionOption((OnItemObtained)condition, splitPanel);
                 default:
                     Debug.Assert(false);
                     return null;
@@ -227,8 +227,7 @@ namespace LiveSplit.DarkSoulsIGT
                 case ConditionType.Quitout:
                     return new OnQuitout(1);
                 case ConditionType.ItemObtained:
-                    //return new OnItemObtained(); TODO: implement this
-                    return null;
+                    return new OnItemObtained();
                 default:
                     Debug.Assert(false);
                     return null;
@@ -260,40 +259,21 @@ namespace LiveSplit.DarkSoulsIGT
             return count;
         }
 
-        static string[] GetItemNames(int itemTypeIdx)
-        {
-            /*
-            switch (itemTypeIdx)
-            {
-                case 0: // Melee weapons
-                    return new string[] { };
-                case 1: // Rings
-                    return new string[] { };
-                default:
-                    Debug.Assert(false);
-                    return null;
-            }
-            */
-
-            // Test items
-            string[] testItemNames = new string[Flags.TestItems.Length];
-            for (int i = 0; i < Flags.TestItems.Length; i++)
-                testItemNames[i] = Flags.TestItems[i].name;
-            return testItemNames;
-        }
-
-        static Control CreateItemConditionOption(Panel conditionPanel)
+        static Control CreateItemConditionOption(OnItemObtained condition, Panel conditionPanel)
         {
             ComboBox itemType = new ComboBox();
-            itemType.Items.AddRange(Flags.ItemTypes);
+            itemType.Items.AddRange(Flags.Items.Keys.ToArray());
             itemType.SelectedIndexChanged += (sender, e) =>
             {
                 ComboBox itemNames = new ComboBox();
-                itemNames.Items.AddRange(GetItemNames(itemType.SelectedIndex));
+
+                List<ItemFlag> flags = Flags.Items[Flags.Items.Keys.ToArray()[itemType.SelectedIndex]];
+                foreach (ItemFlag flag in flags)
+                    itemNames.Items.Add(flag.name);
 
                 itemNames.SelectedIndexChanged += (_sender, _e) =>
                 {
-                    // TODO(scewps): implementation
+                    condition.item = flags[itemNames.SelectedIndex];
                 };
 
                 // Remove all options after the condition type selection box, then add the options specific to this condition type

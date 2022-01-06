@@ -2,14 +2,17 @@
 using System.Diagnostics;
 using LiveSplit.ComponentUtil;
 
-namespace LiveSplit.DarkSoulsIGT {
-    public enum GameVersion {
+namespace LiveSplit.DarkSoulsIGT
+{
+    public enum GameVersion
+    {
         PrepareToDie,
         Remastered,
         None,
     }
 
-    public class Model {
+    public class Model
+    {
         /// <summary>
         /// Singleton
         /// </summary>
@@ -43,7 +46,7 @@ namespace LiveSplit.DarkSoulsIGT {
                 darksouls.OnQuitout += Darksouls_OnQuitout;
                 OnDarkSoulsHooked?.Invoke(darksouls);
                 proc.Exited += Proc_Exited;
-            } 
+            }
             else
             {
                 // @TODO create DSR

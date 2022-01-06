@@ -58,8 +58,12 @@
   <ItemGroup>
     <Compile Include="Conditions\Condition.cs" />
     <Compile Include="Conditions\OnBossDied.cs" />
+    <Compile Include="Conditions\OnItemObtained.cs" />
     <Compile Include="Conditions\OnQuitout.cs" />
     <Compile Include="DarkSouls.cs" />
+    <Compile Include="Resources\ItemProperties.cs" />
+    <EmbeddedResource Include="Resources\Items\Armor.txt" />
+    <EmbeddedResource Include="Resources\Items\Consumables.txt" />
     <Compile Include="UI\AutosplitterUI.cs" />
     <Compile Include="DSComponent.cs" />
     <Compile Include="DSFactory.cs" />
@@ -76,6 +80,15 @@
     <Compile Include="UI\DSSettings.Designer.cs">
       <DependentUpon>DSSettings.cs</DependentUpon>
     </Compile>
+    <EmbeddedResource Include="Resources\Items\KeyItems.txt" />
+    <EmbeddedResource Include="Resources\Items\MeleeWeapons.txt" />
+    <EmbeddedResource Include="Resources\Items\RangedWeapons.txt" />
+    <EmbeddedResource Include="Resources\Items\Rings.txt" />
+    <EmbeddedResource Include="Resources\Items\Shields.txt" />
+    <EmbeddedResource Include="Resources\Items\Spells.txt" />
+    <EmbeddedResource Include="Resources\Items\SpellTools.txt" />
+    <EmbeddedResource Include="Resources\Items\UpgradeMaterials.txt" />
+    <EmbeddedResource Include="Resources\Items\UsableItems.txt" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="UI\DSSettings.resx">

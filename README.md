@@ -1,6 +1,6 @@
 # Dark Souls In-Game Time LiveSplit Plugin
 
-LiveSplit In-Game Time plugin Dark Souks and Dark Souls Remastered made by [CapitaineToinon](https://github.com/CapitaineToinon). The plugin is part of the [LiveSplit autosplitter xml file](https://github.com/LiveSplit/LiveSplit/blob/master/LiveSplit.AutoSplitters.xml) and will be automatically downloaded by LiveSplit. 
+LiveSplit In-Game Time plugin Dark Souls and Dark Souls Remastered made by [CapitaineToinon](https://github.com/CapitaineToinon). The plugin is part of the [LiveSplit autosplitter xml file](https://github.com/LiveSplit/LiveSplit/blob/master/LiveSplit.AutoSplitters.xml) and will be automatically downloaded by LiveSplit. 
 
 ## Usage
 * Download [LiveSplit](http://livesplit.github.io/)

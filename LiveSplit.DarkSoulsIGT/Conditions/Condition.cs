@@ -102,16 +102,44 @@ namespace LiveSplit.DarkSoulsIGT.Conditions
 
         public event OnConditionListCompleteEventHandler OnConditionListComplete;
 
-        int current = 0;
-        public List<Condition> conditions;
+        private int current = 0;
+        private List<Condition> conditions;
 
         public ConditionList(List<Condition> conditions)
         {
             this.conditions = conditions;
+            /*
             foreach (var condition in conditions)
             {
                 condition.OnConditionComplete += Condition_OnConditionComplete;
             }
+            */
+        }
+
+        public void AddCondition(Condition condition)
+        {
+            conditions.Add(condition);
+            if (condition != null)
+                condition.OnConditionComplete += Condition_OnConditionComplete;
+        }
+
+        public void AddCondition(int index, Condition condition)
+        {
+            conditions[index] = condition;
+            if (condition != null)
+                condition.OnConditionComplete += Condition_OnConditionComplete;
+        }
+
+        public void RemoveCondition(int index)
+        {
+            Condition condition = conditions[index];
+            condition.Stop();
+            conditions.RemoveAt(index);
+        }
+
+        public int ConditionCount
+        {
+            get { return conditions.Count; }
         }
 
         private void Condition_OnConditionComplete()

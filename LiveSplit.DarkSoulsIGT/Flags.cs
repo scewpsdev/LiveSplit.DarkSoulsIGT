@@ -99,17 +99,19 @@ namespace LiveSplit.DarkSoulsIGT
             new BossFlag("Stray Demon", 11810900),
         };
 
-        // TODO: complete this list
-        public static string[] ItemTypes =
+        public static Dictionary<string, List<ItemFlag>> Items = new Dictionary<string, List<ItemFlag>>()
         {
-            "Melee Weapons",
-            "Rings",
-        };
-
-        // TODO: complete this list and set appropriate flags
-        public static ItemFlag[] TestItems =
-        {
-            new ItemFlag("Red Tearstone Ring", 0),
+            { "Armor", ItemProperties.Armor },
+            { "Consumables", ItemProperties.Consumables },
+            { "Key Items", ItemProperties.KeyItems },
+            { "Melee Weapons", ItemProperties.MeleeWeapons },
+            { "Ranged Weapons", ItemProperties.RangedWeapons },
+            { "Rings", ItemProperties.Rings },
+            { "Shields", ItemProperties.Shields },
+            { "Spells", ItemProperties.Spells },
+            { "Spell Tools", ItemProperties.SpellTools },
+            { "Upgrade Materials", ItemProperties.UpgradeMaterials },
+            { "Usable Items", ItemProperties.UsableItems },
         };
     }
 }

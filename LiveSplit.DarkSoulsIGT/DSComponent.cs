@@ -51,7 +51,7 @@ namespace LiveSplit.DarkSoulsIGT
             }
         }
 
-        private void State_OnStart(object sender, EventArgs e)
+        private void ResetAutosplitter()
         {
             current = 0;
             state.IsGameTimePaused = true;
@@ -60,6 +60,7 @@ namespace LiveSplit.DarkSoulsIGT
             //List<ConditionList> fromSettings = new List<ConditionList>();
             List<ConditionList> fromSettings = autosplitterUI.splitConditions;
 
+            /*
             fromSettings.Add(new ConditionList(new List<Condition>()
             {
                 new OnBossDied(Flags.Bosses[0]),
@@ -70,6 +71,7 @@ namespace LiveSplit.DarkSoulsIGT
             {
                 new OnQuitout(),
             }));
+            */
 
             splits = fromSettings;
 
@@ -77,7 +79,11 @@ namespace LiveSplit.DarkSoulsIGT
             {
                 split.OnConditionListComplete += Split_OnConditionListComplete; ;
             }
+        }
 
+        private void State_OnStart(object sender, EventArgs e)
+        {
+            ResetAutosplitter();
             splits[current].Start();
         }
 
@@ -93,6 +99,8 @@ namespace LiveSplit.DarkSoulsIGT
             }
 
             splits.Clear();
+
+            ResetAutosplitter();
         }
 
         private void State_OnUndoSplit(object sender, EventArgs e)
