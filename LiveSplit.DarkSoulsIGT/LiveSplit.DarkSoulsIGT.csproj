@@ -58,8 +58,9 @@
   <ItemGroup>
     <Compile Include="Conditions\Condition.cs" />
     <Compile Include="Conditions\OnBossDied.cs" />
-    <Compile Include="Conditions\OnItemObtained.cs" />
+    <Compile Include="Conditions\OnItemPickup.cs" />
     <Compile Include="Conditions\OnQuitout.cs" />
+    <Compile Include="Conditions\OnWarp.cs" />
     <Compile Include="DarkSouls.cs" />
     <Compile Include="Resources\ItemProperties.cs" />
     <EmbeddedResource Include="Resources\Items\Armor.txt" />

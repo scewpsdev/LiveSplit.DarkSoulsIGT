@@ -6,12 +6,12 @@ using System.Threading.Tasks;
 
 namespace LiveSplit.DarkSoulsIGT.Conditions
 {
-    class OnQuitout : Condition
+    class OnWarp : Condition
     {
         public int total;
         int count = 0;
 
-        public OnQuitout(int total = 1) : base(ConditionType.Quitout)
+        public OnWarp(int total = 1) : base(ConditionType.Warp)
         {
             this.total = total;
         }
@@ -23,15 +23,15 @@ namespace LiveSplit.DarkSoulsIGT.Conditions
 
         public override void Start()
         {
-            Model.Instance.OnQuitout += Instance_OnQuitout;
+            //Model.Instance.OnWarp += Instance_OnWarp;
         }
 
         public override void Stop()
         {
-            Model.Instance.OnQuitout -= Instance_OnQuitout;
+            //Model.Instance.OnWarp -= Instance_OnWarp;
         }
 
-        private void Instance_OnQuitout()
+        private void Instance_OnWarp()
         {
             count++;
             if (count >= total)

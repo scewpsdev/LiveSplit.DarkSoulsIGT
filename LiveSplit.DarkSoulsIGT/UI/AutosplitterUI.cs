@@ -208,10 +208,12 @@ namespace LiveSplit.DarkSoulsIGT
             {
                 case ConditionType.BossDied:
                     return CreateBossConditionOption((OnBossDied)condition);
+                case ConditionType.ItemPickup:
+                    return CreateItemConditionOption((OnItemPickup)condition, splitPanel);
                 case ConditionType.Quitout:
                     return CreateQuitoutConditionOption((OnQuitout)condition);
-                case ConditionType.ItemObtained:
-                    return CreateItemConditionOption((OnItemObtained)condition, splitPanel);
+                case ConditionType.Warp:
+                    return CreateWarpConditionOption((OnWarp)condition);
                 default:
                     Debug.Assert(false);
                     return null;
@@ -224,10 +226,12 @@ namespace LiveSplit.DarkSoulsIGT
             {
                 case ConditionType.BossDied:
                     return new OnBossDied();
+                case ConditionType.ItemPickup:
+                    return new OnItemPickup();
                 case ConditionType.Quitout:
-                    return new OnQuitout(1);
-                case ConditionType.ItemObtained:
-                    return new OnItemObtained();
+                    return new OnQuitout();
+                case ConditionType.Warp:
+                    return new OnWarp();
                 default:
                     Debug.Assert(false);
                     return null;
@@ -248,18 +252,7 @@ namespace LiveSplit.DarkSoulsIGT
             return bossList;
         }
 
-        static Control CreateQuitoutConditionOption(OnQuitout condition)
-        {
-            NumericUpDown count = new NumericUpDown();
-            count.Minimum = 1;
-            count.ValueChanged += (sender, e) =>
-            {
-                condition.total = (int)count.Value;
-            };
-            return count;
-        }
-
-        static Control CreateItemConditionOption(OnItemObtained condition, Panel conditionPanel)
+        static Control CreateItemConditionOption(OnItemPickup condition, Panel conditionPanel)
         {
             ComboBox itemType = new ComboBox();
             itemType.Items.AddRange(Flags.Items.Keys.ToArray());
@@ -282,6 +275,28 @@ namespace LiveSplit.DarkSoulsIGT
                 conditionPanel.Controls.Add(itemNames);
             };
             return itemType;
+        }
+
+        static Control CreateQuitoutConditionOption(OnQuitout condition)
+        {
+            NumericUpDown count = new NumericUpDown();
+            count.Minimum = 1;
+            count.ValueChanged += (sender, e) =>
+            {
+                condition.total = (int)count.Value;
+            };
+            return count;
+        }
+
+        static Control CreateWarpConditionOption(OnWarp condition)
+        {
+            NumericUpDown count = new NumericUpDown();
+            count.Minimum = 1;
+            count.ValueChanged += (sender, e) =>
+            {
+                condition.total = (int)count.Value;
+            };
+            return count;
         }
     }
 }

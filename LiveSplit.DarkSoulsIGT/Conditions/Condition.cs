@@ -63,8 +63,9 @@ namespace LiveSplit.DarkSoulsIGT.Conditions
     {
         None = -1,
         BossDied,
+        ItemPickup,
         Quitout,
-        ItemObtained,
+        Warp,
     }
 
     public abstract class Condition
@@ -72,8 +73,9 @@ namespace LiveSplit.DarkSoulsIGT.Conditions
         public static readonly string[] Names =
         {
             "Boss",
-            "Quitout",
             "Item",
+            "Quitout",
+            "Warp",
         };
 
         public event OnConditionCompleteEventHandler OnConditionComplete;

@@ -6,13 +6,13 @@ using System.Threading.Tasks;
 
 namespace LiveSplit.DarkSoulsIGT.Conditions
 {
-    class OnItemObtained : Condition
+    class OnItemPickup : Condition
     {
         public ItemFlag item = null;
         bool isObtained = false;
 
 
-        public OnItemObtained() : base(ConditionType.ItemObtained)
+        public OnItemPickup() : base(ConditionType.ItemPickup)
         {
         }
 
